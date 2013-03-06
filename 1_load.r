@@ -34,84 +34,205 @@ cleaned <- originals
 
 # Rename MASTER (ie questionnaire) variables
 # PC_1 indicates a patient's enrollment status
-names(originals$master)[names(originals$master) %in% "PC_1"] <- "status"
+names(cleaned$master)[names(originals$master) %in% "PC_1"] <- "status"
 
 # ... whereas Status indicates *that form's* status (draft, submitted, etc)
 # To me, much more intuitive for PC_1 to be "status" and Status to be
 # "form_status"
-names(originals$master)[names(originals$master) %in% "Status"] <- "form_status"
+names(cleaned$master)[names(originals$master) %in% "Status"] <- "form_status"
 
+
+
+
+data.frame(old = names(originals$master),
+           new = names(cleaned$master))
 
 
 
 # Rename TST variables
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_1_AND_2"] <- "dt_placed"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_2_Reason"] <- "reason_2"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_3"] <- "placed_by"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_3_Reason"] <- "reason_3"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_4"] <- "ppd_mfg"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_5"] <- "ppd_lot"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_6"] <- "date_read"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_7"] <- "time_read"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_6_AND_7"] <- "dt_read"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_6_Reason"] <- "reason_6"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_7_Reason"] <- "reason_7"
 
-names(originals$skintest)[names(originals$skintest) 
-                          %in% "TST_8"] <- "tst_mm"
+names(cleaned$skintest)[names(originals$skintest) 
+                          %in% "TST_8"] <- "indur_mm"
 
-names(originals$skintest)[names(originals$skintest) 
-                          %in% "TST_9"] <- "tst_interp"
+names(cleaned$skintest)[names(originals$skintest) 
+                          %in% "TST_9"] <- "result"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_10"] <- "blistering"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_11"] <- "read_by"
 
-names(originals$skintest)[names(originals$skintest) 
+names(cleaned$skintest)[names(originals$skintest) 
                           %in% "TST_11_Reason"] <- "reason_11"
+
+names(cleaned$skintest)[names(originals$skintest) 
+                          %in% "Status"] <- "form_status"
+
+
+
+# Renaming check
+data.frame(old = names(originals$skintest),
+           new = names(cleaned$skintest))
+
+
 
 
 # Rename QFT variables
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_1_AND_2"] <- "dt_placed"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_3"] <- "placed_by"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_4"] <- "nil_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_5"] <- "tb_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_6"] <- "mito_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_7"] <- "assay_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_8"] <- "result"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_8_Nil"] <- "nil"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_8_TB"] <- "tb"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_8_Mit"] <- "mito"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_8_TBNil"] <- "tbnil"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_8_MitNil"] <- "mitnil"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_9"] <- "rerun_nil_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_10"] <- "rerun_tb_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_11"] <- "rerun_mito_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_12"] <- "rerun_assay_lot"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_13"] <- "rerun_result"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_13_Nil"] <- "rerun_nil"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_13_TB"] <- "rerun_tb"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_13_Mit"] <- "rerun_mito"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_13_TBNil"] <- "rerun_tbnil"
+
+names(cleaned$qft)[names(originals$qft) 
+                          %in% "QFT_13_MitNil"] <- "rerun_mitnil"
+
+
+
+names(cleaned$qft)[names(originals$qft) %in% "Status"] <- "form_status"
+
+
+# Renaming check
+data.frame(old = names(originals$qft),
+           new = names(cleaned$qft))
+
+
 
 
 
 # Rename TSPOT variables
+names(cleaned$tspot)[names(originals$tspot) %in% "Status"] <- "form_status"
+
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_1_AND_2"] <- "dt_placed"
+
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_3"] <- "result"
+
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_3a"] <- "nil"
+
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_3b"] <- "mito"
+
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_3c"] <- "panel_a"
+
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_3d"] <- "panel_b"
 
 
 
 
+
+# Renaming check
+data.frame(old = names(originals$tspot),
+           new = names(cleaned$tspot))
 
 
 
 # Convert datetimes to POSIXct
-originals$skintest$dt_placed <- as.POSIXct(originals$skintest$dt_placed,
-                                           format = "%d%B%Y:%H:%M:%S.000")
-
-originals$skintest$dt_read <- as.POSIXct(originals$skintest$dt_read, 
+cleaned$skintest$dt_placed <- as.POSIXct(cleaned$skintest$dt_placed,
                                          format = "%d%B%Y:%H:%M:%S.000")
+
+cleaned$skintest$dt_read <- as.POSIXct(cleaned$skintest$dt_read, 
+                                       format = "%d%B%Y:%H:%M:%S.000")
+
+cleaned$qft$dt_placed <- as.POSIXct(cleaned$qft$dt_placed,
+                                    format = "%d%B%Y:%H:%M:%S.000")
+
+cleaned$tspot$dt_placed <- as.POSIXct(cleaned$tspot$dt_placed,
+                                      format = "%d%B%Y:%H:%M:%S.000")
 
 
 
