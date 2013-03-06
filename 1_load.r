@@ -21,3 +21,66 @@ names(originals) <- tolower(gsub(x = basename(extracts),
                                  replace = "\\1")
 )
 
+
+# Rename variables to something actually useful
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_1_AND_2"] <- "dt_placed"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_2_Reason"] <- "reason_2"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_3"] <- "placed_by"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_3_Reason"] <- "reason_3"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_4"] <- "ppd_mfg"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_5"] <- "ppd_lot"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_6"] <- "date_read"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_7"] <- "time_read"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_6_AND_7"] <- "dt_read"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_6_Reason"] <- "reason_6"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_7_Reason"] <- "reason_7"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_8"] <- "tst_mm"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_9"] <- "tst_interp"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_10"] <- "blistering"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_11"] <- "read_by"
+
+names(originals$skintest)[names(originals$skintest) 
+                          %in% "TST_11_Reason"] <- "reason_11"
+
+
+
+
+
+# Convert datetimes to POSIXct
+originals$skintest$dt_placed <- as.POSIXct(originals$skintest$dt_placed,
+                                           format = "%d%B%Y:%H:%M:%S.000")
+
+originals$skintest$dt_read <- as.POSIXct(originals$skintest$dt_read, 
+                                         format = "%d%B%Y:%H:%M:%S.000")
+
+
+
