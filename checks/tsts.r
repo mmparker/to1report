@@ -30,7 +30,7 @@
 
     # Were TSTs placed after the QFT and TSPOT?
     tstqft <- merge(x = tsts,
-                    y = cleaned$qfts,
+                    y = cleaned$qft,
                     by = "PatientID",
                     all.x = TRUE)
 
