@@ -21,8 +21,24 @@ names(originals) <- tolower(gsub(x = basename(extracts),
                                  replace = "\\1")
 )
 
-
+################################################################################
 # Rename variables to something actually useful
+################################################################################
+
+
+# Rename MASTER (ie questionnaire) variables
+# PC_1 indicates a patient's enrollment status
+names(originals$master)[names(originals$master) %in% "PC_1"] <- "status"
+
+# ... whereas Status indicates *that form's* status (draft, submitted, etc)
+# To me, much more intuitive for PC_1 to be "status" and Status to be
+# "form_status"
+names(originals$master)[names(originals$master) %in% "Status"] <- "form_status"
+
+
+
+
+# Rename TST variables
 names(originals$skintest)[names(originals$skintest) 
                           %in% "TST_1_AND_2"] <- "dt_placed"
 
@@ -70,6 +86,15 @@ names(originals$skintest)[names(originals$skintest)
 
 names(originals$skintest)[names(originals$skintest) 
                           %in% "TST_11_Reason"] <- "reason_11"
+
+
+# Rename QFT variables
+
+
+
+# Rename TSPOT variables
+
+
 
 
 
