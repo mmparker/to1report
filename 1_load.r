@@ -15,11 +15,17 @@ extracts <- list.files("G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\Data",
 originals <- lapply(extracts, read.csv)
 
 
-# Rename them
+# Rename the entries in originals for ease of reference
 names(originals) <- tolower(gsub(x = basename(extracts),
                                  pattern = "^Denver_V(\\w*).*\\.csv",
                                  replace = "\\1")
 )
+
+
+# Set up a "cleaned" list to preserve originals for comparisons
+cleaned <- originals
+
+
 
 ################################################################################
 # Rename variables to something actually useful
