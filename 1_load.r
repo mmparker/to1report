@@ -239,3 +239,7 @@ cleaned$tspot$dt_placed <- as.POSIXct(cleaned$tspot$dt_placed,
 
 
 
+
+
+# Write out the cleaned list for easy use
+save(cleaned, file = "to1_cleaned.rdata")
