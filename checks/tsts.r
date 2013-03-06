@@ -4,11 +4,11 @@
 
 
 
-#tst_check <- function(originals, outdir) {
+#tst_check <- function(cleaned, outdir) {
 
-    tsts <- originals$skintest
+    tsts <- cleaned$skintest
 
-    # Check that the TST, QFT, and TSPOT entries in originals are complete
+    # Check that the TST, QFT, and TSPOT entries are complete
     # Check that 
 
 
@@ -30,7 +30,7 @@
 
     # Were TSTs placed after the QFT and TSPOT?
     tstqft <- merge(x = tsts,
-                    y = originals$qfts,
+                    y = cleaned$qfts,
                     by = "PatientID",
                     all.x = TRUE)
 
@@ -41,7 +41,7 @@
 
     # Attach study IDs to those
     id.oob <- merge(x = tsts.oob,
-                    y = subset(originals$master, 
+                    y = subset(cleaned$master, 
                                select = c("PatientID", "StudyId")),
                     by = "PatientID",
                     all.x = TRUE)
