@@ -211,6 +211,9 @@ names(cleaned$tspot)[names(originals$tspot)
 names(cleaned$tspot)[names(originals$tspot) 
                           %in% "TSPOT_3d"] <- "panel_b"
 
+names(cleaned$tspot)[names(originals$tspot) 
+                          %in% "TSPOT_Report_Date"] <- "report_date"
+
 
 
 
