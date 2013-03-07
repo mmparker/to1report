@@ -16,4 +16,4 @@ outdir <- "G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\QA\\auto_qa\\proble
 
 
 # Test-related checks
-tst_check(originals)
+tst_check(cleanlist = cleaned, outdir = outdir)
