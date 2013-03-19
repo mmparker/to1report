@@ -15,5 +15,9 @@ load("G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\Data\\cleaned\\to1_clean
 outdir <- "G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\QA\\auto_qa\\problems"
 
 
+# Temporary name for the cleaned data - match arg names before functions
+# become real functions
+cleanlist <- cleaned
+
 # Test-related checks
 tst_check(cleanlist = cleaned, outdir = outdir)
