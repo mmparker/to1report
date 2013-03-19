@@ -35,42 +35,44 @@ cleanlist <- cleaned
     # Were TSTs placed after the QFT and TSPOT?
     ########################################################################### 
 
-    tstqft <- merge(x = tsts,
-                    y = subset(cleanlist$qft,
-                               select = c("PatientID", "dt_placed")),
-                    by = "PatientID",
-                    suffixes = c(".tst", ".igra"),
-                    all.x = TRUE)
-
-    tstqft$hrs_between <- as.numeric(
-        with(tstqft, difftime(dt_placed.tst, dt_placed.igra, units = "hours"))
+    # Merge the IGRAs for ease of use
+    igras <- subset(merge(x = cleanlist$qft,
+                          y = cleanlist$tspot,
+                          by = "PatientID",
+                          all = TRUE,
+                          suffixes = c("_qft", "_tspot")),
+                    select = c("PatientID", "dt_placed_qft", "dt_placed_tspot")
     )
 
-    tsts.postqft <- subset(tstqft,
-                           subset = hrs_between < 0,
-                           select = c("StudyId", 
-                                      "dt_placed.tst", "dt_placed.igra",
-                                      "placed_by", "hrs_between"))
 
-    tsttspot <- merge(x = tsts,
-                      y = subset(cleanlist$tspot,
-                                 select = c("PatientID", "dt_placed")),
-                      by = "PatientID",
-                      suffixes = c(".tst", ".igra"),
-                      all.x = TRUE)
-
-    tsttspot$hrs_between <- as.numeric(with(tsttspot, 
-        difftime(dt_placed.tst, dt_placed.igra, units = "hours"))
+    # Add them to the TSTs
+    tstigra <- subset(merge(x = tsts,
+                            y = igras,
+                            all.x = TRUE),
+                      select = c("StudyId", "dt_placed", 
+                                 "dt_placed_qft", "dt_placed_tspot")
     )
 
-    tsts.posttspot <- subset(tsttspot,
-                           subset = hrs_between < 0,
-                           select = c("StudyId", 
-                                      "dt_placed.tst", "dt_placed.igra",
-                                      "placed_by", "hrs_between"))
+    # Calc hours between QFT draw and TST placement - should be negative
+    tstigra$qft_hrs_between <- with(tstigra,
+        as.numeric(difftime(dt_placed_qft, dt_placed, units = "hours"))
+    )
 
-    # Stack 'em
-    tsts.postigra <- rbind(tsts.postqft, tsts.posttspot)
+    # Calc hours between TSPOT draw and TST placement - should be negative
+    tstigra$tspot_hrs_between <- with(tstigra,
+        as.numeric(difftime(dt_placed_tspot, dt_placed, units = "hours"))
+    )
+
+
+    # Filter to tests with any positive time between IGRA and TST placement
+    tsts.postigra <- subset(tstigra, 
+                            qft_hrs_between > 0 | tspot_hrs_between > 0)
+
+    # Slightly improved report names
+    names(tsts.postigra) <- c("studyid", "tst_placed", 
+                              "qft_placed", "tspot_placed", 
+                              "hours_before_qft", "hours_before_tspot")
+
 
 
 
