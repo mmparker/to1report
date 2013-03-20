@@ -21,3 +21,7 @@ cleanlist <- cleaned
 
 # Test-related checks
 tst_check(cleanlist = cleaned, outdir = outdir)
+
+
+# Patient status checks
+closed_check(cleanlist = cleaned, outdir = outdir)

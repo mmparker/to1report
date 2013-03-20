@@ -4,8 +4,7 @@
 
 
 
-# tst_check <- function(cleanlist, outdir) {
-cleanlist <- cleaned
+tst_check <- function(cleanlist, outdir) {
 
     tsts <- cleanlist$skintest
 
@@ -127,4 +126,4 @@ cleanlist <- cleaned
 
 
 
-#}
+}
