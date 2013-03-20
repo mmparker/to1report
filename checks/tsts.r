@@ -88,7 +88,7 @@ cleanlist <- cleaned
                          all.x = TRUE)
 
     # Were any placed before the enrollment date?
-    tsts.beforeenroll <- subset(tsts_enroll, 
+    tsts.beforeenroll <- subset(tsts.enroll, 
                                 subset = as.Date(dt_placed) < enroll_date,
                                 select = c("StudyId", 
                                            "enroll_date", "dt_placed")
