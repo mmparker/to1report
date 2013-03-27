@@ -15,12 +15,18 @@ load("G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\Data\\cleaned\\to1_clean
 outdir <- "G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\QA\\auto_qa\\problems"
 
 
+# Load up the functions - need to make a package
+lapply(list.files(path = "./checks", pattern = "*.r", full.names = TRUE),
+       source)
+
+
 # Temporary name for the cleaned data - match arg names before functions
 # become real functions
 cleanlist <- cleaned
 
 # Test-related checks
 tst_check(cleanlist = cleaned, outdir = outdir)
+test_check(cleanlist = cleaned, outdir = outdir)
 
 
 # Patient status checks
