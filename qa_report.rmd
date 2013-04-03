@@ -5,6 +5,7 @@
 ```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE}
 library(to1check)
 library(plyr)
+library(xtable)
 
 # Load the latest cleaned data
 load("G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\Data\\cleaned\\to1clean.rdata")
@@ -140,6 +141,8 @@ if(nrow(missingtest) > 0) {
 } else {
   cat("All participants have TST, QFT, and TSPOT test results.")
 }
+
+print(xtable(missingtest), type = "html", include.rownames = FALSE)
 ```
 
 
