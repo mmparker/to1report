@@ -181,10 +181,16 @@ print(xtable(ageprob), type = "html", include.rownames = FALSE)
 
 
 
-### TST Lots with Only One Test Placed
+### TSTs with Rare PPD Lot Numbers
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+lotfreq <- count(to1clean$skintest, "PpdLotNumber")
 
+rare_tst_lot <- subset(to1clean$skintest,
+                       subset = PpdLotNumber %in% lotfreq$PpdLotNumber[lotfreq$freq < 10],
+                       select = c("StudyId", "TstPlacedBy", "PpdLotNumber"))
 
-### QFT Lots with Only One Test Placed
+print(xtable(arrange(rare_tst_lot, PpdLotNumber)), type = "html", include.rownames = FALSE)
+```
 
 
 
