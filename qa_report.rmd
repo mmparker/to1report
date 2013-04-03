@@ -114,7 +114,22 @@ print(xtable(tripnegtoclose), type = "html", include.rownames = FALSE)
 ------------------------
 
 ### Participants with TSTs Read Outside of the 44-76 Hour Window
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+winprob <- tst_win_check(to1clean)
 
+# xtable craps itself on POSIXct, sadly...
+winprob$dt_placed <- as.character(winprob$dt_placed)
+winprob$dt_read <- as.character(winprob$dt_read)
+
+# Pretty names
+names(winprob) <- c("StudyId",
+                    "Date/Time Placed", "Placed By",
+                    "Date/Time Read", "Read By",
+                    "Hours Between")
+
+
+print(xtable(winprob), type = "html", include.rownames = FALSE)
+```
 
 
 ### Participants with Missing TST, QFT, or TSPOT Results
