@@ -3,3 +3,4 @@ problems/*
 figure/*
 *.md
 *.html
+local_facts.csv

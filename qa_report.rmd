@@ -1,23 +1,33 @@
-# TBESC TO 1 Data Quality Report
 
-## Enrollment Progress
----------------------
-```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE}
+```{r,echo=FALSE, results="as-is",message=FALSE, warning=FALSE,error=FALSE}
+# Initialize!
+
+# Stop R from interpreting strings as factors. When you want factors, you'll know it.
+options(stringsAsFactors = FALSE)
+
+# Load up the requisite packages
 library(to1check)
 library(plyr)
 library(xtable)
 
+# Load the local info (edit this if your results are wrong)
+local_facts <- read.csv("local_facts.csv")
+
 # Load the latest cleaned data
-load("G:\\StrategicArea\\TB_Program\\Research\\TBESC 2\\Data\\cleaned\\to1clean.rdata")
+load(local_facts$datapath)
 
 # Set aside those who were successfully enrolled - we'll generally disregard those who declined
 # or didn't complete enrollment 
 enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple Negative", "Open")]
 ```
 
-Total Enrollment To Date: `r nrow(subset(to1clean$master, VisitDate >= as.Date("2012-11-01")))`
+`r paste("# TBESC TO 1 Site Report:", local_facts$site)`
 
-(excludes enrollment prior to November 2012 - assumed to be pilot enrollment)
+## Enrollment Progress
+---------------------
+Total Enrollment To Date: `r nrow(subset(to1clean$master, VisitDate >= as.Date(local_facts$period_start)))`
+
+(covering the period `r paste(local_facts$period_start)` through `r paste(local_facts$period_end)`)
 
 
 ```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 12, fig.height = 6}
@@ -25,9 +35,9 @@ Total Enrollment To Date: `r nrow(subset(to1clean$master, VisitDate >= as.Date("
 enrolled_dates <- to1clean$master$VisitDate[to1clean$master$StudyId %in% enrolled]
 
 enroll_progress_plot(enrolled_dates,
-                     target = 500,
-                     enroll_start = as.Date("2012-11-01"),
-                     enroll_end = as.Date("2013-08-30")
+                     target = local_facts$enroll_target,
+                     enroll_start = as.Date(local_facts$period_start),
+                     enroll_end = as.Date(local_facts$period_end)
 )
 
 ```
