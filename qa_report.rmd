@@ -103,15 +103,11 @@ if(nrow(fu_report) > 0) {
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
 tripnegtoclose <- closed_check(to1clean)
 
-if(nrow(tripnegtoclose) > 0) {
-    cat(paste(names(tripnegtoclose), collapse = " | "), 
-        paste(rep("---", length(names(tripnegtoclose))), collapse = " | "),
-        sep = "\n"
-    )
-    cat(apply(tripnegtoclose, 1, function(x) paste(x, collapse = " | ")), sep = "\n")
-} else {
-  cat("All triple-negative participants are closed.")
-}
+# Pretty names
+names(tripnegtoclose) <- c("StudyId", "Status", "TST Neg?", "QFT Neg?",
+                           "TSPOT Neg?", "Triple Neg?")
+
+print(xtable(tripnegtoclose), type = "html", include.rownames = FALSE)
 ```
 
 ## Data Quality Checks
@@ -130,19 +126,29 @@ missingtest <- subset(testres,
                       subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & StudyId %in% enrolled,
                       select = c("StudyId", "tst", "qft", "tspot"))
 
+# Pretty names
 names(missingtest) <- c("StudyId", "TST Result", "QFT Result", "TSPOT Result")
 
-if(nrow(missingtest) > 0) {
-    cat(paste(names(missingtest), collapse = " | "), 
-        paste(rep("---", length(names(missingtest))), collapse = " | "),
-        sep = "\n"
-    )
-    cat(apply(missingtest, 1, function(x) paste(x, collapse = " | ")), sep = "\n")
-} else {
-  cat("All participants have TST, QFT, and TSPOT test results.")
-}
 
 print(xtable(missingtest), type = "html", include.rownames = FALSE)
+```
+
+
+### Participants with Pre-enrollment vs. Calculated Age Discrepancies
+Age is calculated from participant's reported date of birth and their visit date.
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+ageprob <- age_check(to1clean)
+
+# Pretty names
+names(ageprob)[names(ageprob) %in% "preenroll_age"] <- "Pre-enroll Age"
+names(ageprob)[names(ageprob) %in% "calc_age"] <- "Calculated Age"
+names(ageprob)[names(ageprob) %in% "age_diff"] <- "Difference"
+
+# xtable craps itself on Dates, sadly...
+ageprob$BirthDate <- as.character(ageprob$BirthDate)
+ageprob$VisitDate <- as.character(ageprob$VisitDate)
+
+print(xtable(ageprob), type = "html", include.rownames = FALSE)
 ```
 
 
@@ -157,4 +163,4 @@ print(xtable(missingtest), type = "html", include.rownames = FALSE)
 
 
 
-# Participants with Enrollment and Phlebotomy on Different Days
+### Participants with Enrollment and Phlebotomy on Different Days
