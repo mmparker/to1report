@@ -1,4 +1,54 @@
 
+
+<style type="text/css">
+
+table {
+  border: 1px solid #808080;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: #1F78B4;
+  color: #FFFFFF;
+  border: 1px solid #808080;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+td {
+  border: 1px solid #808080;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+
+.maintitle {
+  text-align: center;
+  padding-top: 0px;
+}
+
+h2 {
+  text-align: center;
+  padding-top: 80px;
+}
+
+h3, h4 {
+  padding-top: 30px;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background: #333;
+  background-image: -webkit-linear-gradient(left, #ccc, #333, #ccc); 
+  background-image:    -moz-linear-gradient(left, #ccc, #333, #ccc); 
+  background-image:     -ms-linear-gradient(left, #ccc, #333, #ccc); 
+  background-image:      -o-linear-gradient(left, #ccc, #333, #ccc); 
+}
+
+</style>
+
+
+
 ```{r,echo=FALSE, results="as-is",message=FALSE, warning=FALSE,error=FALSE}
 # Initialize!
 
@@ -35,8 +85,8 @@ dfprint <- function(df) {
 
 ```
 
-`r paste("# TBESC TO 1 Site Report:", local_facts$site)`
-`r paste("## Enrollment Period:", local_facts$period_start, "through", local_facts$period_end)`
+<h1 class='maintitle'>TBESC TO 1 Site Report: `r local_facts$site`</h1>
+<h3 class='maintitle'>Enrollment Period: `r paste(local_facts$period_start, "through", local_facts$period_end)`</h3>
 
 
 ## Enrollment Progress
