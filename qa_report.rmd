@@ -6,9 +6,10 @@
 options(stringsAsFactors = FALSE)
 
 # Load up the requisite packages
-library(to1check)
-library(plyr)
-library(xtable)
+library(to1check)  # All TO1-related functions
+library(plyr)      # For the count() and arrange() functions
+library(xtable)    # For printing data.frames nicely
+library(lubridate) # For calculating number of weeks remaining
 
 # Load the local info (edit this if your results are wrong)
 local_facts <- read.csv("local_facts.csv")
@@ -30,16 +31,36 @@ dfprint <- function(df) {
 }
 
 
+
+
 ```
 
 `r paste("# TBESC TO 1 Site Report:", local_facts$site)`
+`r paste("## Enrollment Period:", local_facts$period_start, "through", local_facts$period_end)`
+
 
 ## Enrollment Progress
 ---------------------
-Total Enrollment To Date: `r nrow(subset(to1clean$master, VisitDate >= as.Date(local_facts$period_start)))`
+```{r,echo=FALSE, results="asis",message=FALSE, warning=FALSE,error=FALSE}
 
-(covering the period `r paste(local_facts$period_start)` through `r paste(local_facts$period_end)`)
+# Total enrolled so far (I need a better measure of this)
+total_enrolled <- nrow(subset(to1clean$master, VisitDate >= as.Date(local_facts$period_start)))
 
+# Total remaining to meet local target
+total_remain <- local_facts$enroll_target - total_enrolled
+
+# Weeks remaining in the enrollment period
+weeks_left <- new_interval(Sys.Date(), local_facts$period_end) / duration(num = 1, units = "weeks")
+
+# Average weekly enrollment to make target
+weekly_target <- round(total_remain / weeks_left, 1)
+```
+
+Total Enrolled to Date: `r total_enrolled`
+
+Enrollment Remaining: `r total_remain`
+
+Average Weekly Enrollment Required: `r weekly_target`
 
 ```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 12, fig.height = 6}
 # Plot enrollment progress to date
