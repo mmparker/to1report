@@ -22,12 +22,12 @@ td {
 }
 
 .maintitle {
-  text-align: center;
+  text-align: left;
   padding-top: 0px;
 }
 
 h2 {
-  text-align: center;
+  text-align: left;
   padding-top: 80px;
 }
 
