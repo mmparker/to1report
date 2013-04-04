@@ -19,6 +19,17 @@ load(local_facts$datapath)
 # Set aside those who were successfully enrolled - we'll generally disregard those who declined
 # or didn't complete enrollment 
 enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple Negative", "Open")]
+
+
+# Set up default print arguments for printing tables:
+dfprint <- function(df) {
+    print(xtable(df),
+          type = "html",
+          include.rownames = FALSE,
+          NA.string = "-")
+}
+
+
 ```
 
 `r paste("# TBESC TO 1 Site Report:", local_facts$site)`
@@ -95,13 +106,7 @@ names(fu_report) <- c("StudyID", "Enroll Date", "FU Starts", "Fu Ends", "Eligibl
                       "FU Cycle", "Days Left", "Completed")
 
 
-if(nrow(fu_report) > 0) {
-    cat(paste(names(fu_report), collapse = " | "), 
-        paste(rep("---", length(names(fu_report))), collapse = " | "),
-        sep = "\n"
-    )
-    cat(apply(fu_report, 1, function(x) paste(x, collapse = " | ")), sep = "\n")
-} else {
+if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
   cat("No participants require follow-up at this time.")
 } 
 ```
@@ -117,7 +122,7 @@ tripnegtoclose <- closed_check(to1clean)
 names(tripnegtoclose) <- c("StudyId", "Status", "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
-print(xtable(tripnegtoclose), type = "html", include.rownames = FALSE)
+dfprint(tripnegtoclose)
 ```
 
 ## Data Quality Checks
@@ -138,7 +143,7 @@ names(winprob) <- c("StudyId",
                     "Hours Between")
 
 
-print(xtable(winprob), type = "html", include.rownames = FALSE)
+dfprint(winprob)
 ```
 
 
@@ -155,7 +160,7 @@ missingtest <- subset(testres,
 names(missingtest) <- c("StudyId", "TST Result", "QFT Result", "TSPOT Result")
 
 
-print(xtable(missingtest), type = "html", include.rownames = FALSE)
+dfprint(missingtest)
 ```
 
 
@@ -173,12 +178,37 @@ names(ageprob)[names(ageprob) %in% "age_diff"] <- "Difference"
 ageprob$BirthDate <- as.character(ageprob$BirthDate)
 ageprob$VisitDate <- as.character(ageprob$VisitDate)
 
-print(xtable(ageprob), type = "html", include.rownames = FALSE)
+dfprint(ageprob)
 ```
 
 
 ### Height and Weight
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE,fig.width=8}
+htwts <- htwt_check(to1clean)
 
+# Show the plot
+htwts$plot
+```
+
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+# List the outliers
+
+# Slightly nicer names
+names(htwts$outlierdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
+
+cat("Participants with most-outlying heights/weights:")
+dfprint(htwts$outlierdf)
+```
+
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+# List those missing heights or weights
+
+# Slightly nicer names
+names(htwts$missingdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
+
+cat("Enrolled participants missing height and/or weight:")
+dfprint(htwts$missingdf)
+```
 
 
 ### TSTs with Rare PPD Lot Numbers
@@ -189,9 +219,6 @@ rare_tst_lot <- subset(to1clean$skintest,
                        subset = PpdLotNumber %in% lotfreq$PpdLotNumber[lotfreq$freq < 10],
                        select = c("StudyId", "TstPlacedBy", "PpdLotNumber"))
 
-print(xtable(arrange(rare_tst_lot, PpdLotNumber)), type = "html", include.rownames = FALSE)
+dfprint(arrange(rare_tst_lot, PpdLotNumber))
 ```
 
-
-
-### Participants with Enrollment and Phlebotomy on Different Days
