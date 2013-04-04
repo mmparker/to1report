@@ -24,7 +24,7 @@ enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple N
 
 # Set up default print arguments for printing tables:
 dfprint <- function(df) {
-    print(xtable(df),
+    print(xtable(df, align = c("l", "l", rep("c", ncol(df) - 1))),
           type = "html",
           include.rownames = FALSE,
           NA.string = "-")
