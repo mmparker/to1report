@@ -62,6 +62,8 @@ Enrollment Remaining: `r total_remain`
 
 Average Weekly Enrollment Required: `r weekly_target`
 
+
+
 ```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 12, fig.height = 6}
 # Plot enrollment progress to date
 enrolled_dates <- to1clean$master$VisitDate[to1clean$master$StudyId %in% enrolled]
@@ -133,6 +135,9 @@ names(tripnegtoclose) <- c("StudyId", "Status", "TST Neg?", "QFT Neg?",
 dfprint(tripnegtoclose)
 ```
 
+
+
+
 ## Data Quality Checks
 ------------------------
 
@@ -155,6 +160,7 @@ dfprint(winprob)
 ```
 
 
+
 ### Participants with Missing TST, QFT, or TSPOT Results
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
 # Identify participants with a missing test
@@ -170,6 +176,7 @@ names(missingtest) <- c("StudyId", "TST Result", "QFT Result", "TSPOT Result")
 
 dfprint(missingtest)
 ```
+
 
 
 ### Participants with Pre-enrollment vs. Calculated Age Discrepancies
@@ -190,6 +197,7 @@ dfprint(ageprob)
 ```
 
 
+
 ### Height and Weight
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE,fig.width=8}
 htwts <- htwt_check(to1clean)
@@ -198,25 +206,30 @@ htwts <- htwt_check(to1clean)
 htwts$plot
 ```
 
+
+
+#### Participants with most-outlying heights/weights:
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
 # List the outliers
 
 # Slightly nicer names
 names(htwts$outlierdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-cat("Participants with most-outlying heights/weights:")
 dfprint(htwts$outlierdf)
 ```
 
+
+
+#### Enrolled participants missing height and/or weight:
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
 # List those missing heights or weights
 
 # Slightly nicer names
 names(htwts$missingdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-cat("Enrolled participants missing height and/or weight:")
 dfprint(htwts$missingdf)
 ```
+
 
 
 ### TSTs with Rare PPD Lot Numbers
