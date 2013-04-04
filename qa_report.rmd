@@ -74,8 +74,6 @@ enroll_progress_plot(enrolled_dates,
 
 ```
 
-### Participants by Status
-
 
 
 
@@ -106,16 +104,6 @@ ggplot(birthco, aes(x = BirthCountry, weight = freq)) +
 
 
 
-### Participants by Language
-
-
-
-
-### Testing Results
-
-
-
-
 ## Participants with Action Needed
 -----------------------------------
 
@@ -133,7 +121,6 @@ if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
 ```
 
 
-### Participants with Undocumented Treatments
 
 ### Triple-Negative Participants to Close
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
