@@ -135,8 +135,8 @@ enroll_progress_plot(enrolled_dates,
 # Tally up participants by their country of birth
 birthco <- arrange(count(to1clean$master, var = "BirthCountry"), freq, BirthCountry)
 
-# BirthCountry == "" indicates a pre-enrolled person
-birthco$BirthCountry[birthco$BirthCountry == ""] <- "Pre-enrolled"
+# BirthCountry = "" or NA indicates a pre-enrolled person
+birthco$BirthCountry[birthco$BirthCountry %in% c("", NA)] <- "Pre-enrolled"
 
 # Make BirthCountry a factor - this ensures descending order of the bars
 birthco$BirthCountry <- factor(birthco$BirthCountry,  levels = birthco$BirthCountry)
