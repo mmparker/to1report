@@ -153,7 +153,57 @@ ggplot(birthco, aes(x = BirthCountry, weight = freq)) +
 
 ```
 
+### Participant Ages
 
+
+
+### Test Results
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+# Summarize participant test results
+testres <- compile_results(to1clean)
+
+testagg <- count(testres, var = c("result_class"))
+
+testagg$result_class <- factor(testagg$result_class,
+                               levels = c("Triple Negative", "Triple Positive",
+                                          "Isolated TST+", "Isolated QFT+", "Isolated TSPOT+",
+                                          "Isolated TST-", "Isolated QFT-", "Isolated TSPOT-",
+                                          "Inconclusive")
+)
+
+testagg$classprop <- round(testagg$freq / nrow(testres) * 100, 2)
+
+names(testagg) <- c("Results", "Freq", "Proportion")
+
+dfprint(arrange(testagg, Results))
+
+# MATT: make two separate factors - one for sorting by name, one for sorting by proportion.
+# Use the first for the table, second for the plot
+
+```
+
+```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 8, fig.height = 8}
+
+ggplot(testagg, aes(x = as.character(Results), weight = Freq)) +
+  geom_bar() +
+  coord_flip()
+
+```
+
+### Test Results by Country of Origin
+
+
+
+### Test Results by Risk Factor
+
+
+
+
+### Treatment Acceptance
+
+
+
+### 
 
 
 ## Participants with Action Needed

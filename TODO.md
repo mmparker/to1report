@@ -9,6 +9,7 @@
    - Test result breakdown
    - Participants with undocumented treatments (!!!)
 
+ - Exclude pilot participants from height/weight
 
 
 # Nice
