@@ -168,35 +168,122 @@ ggplot(birthco, aes(x = BirthCountry, weight = freq)) +
 
 
 ### Test Results
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
-# Summarize participant test results
+
+```{r,echo=FALSE,results='hide',message=FALSE, warning=FALSE,error=FALSE}
+##################################################
+# Summarize participants' individual test results
 testres <- compile_results(to1clean)
 
+
+# Cast all results into a wide table
+testwide <- dcast(
+                melt(testres,
+                     id.var = "StudyId", 
+                     measure.var = c("tst", "qft", "tspot")),
+                variable ~ value,
+                fun.agg = length
+)
+
+# Tidy up for printing
+# Prettier test names
+testwide$variable <- toupper(as.character(testwide$variable))
+
+# Better column order
+testwide <- testwide[ , c("variable", "Negative", "Positive", 
+                          "Borderline", "Test Not Performed", "NA")]
+
+
+# Pretty names
+names(testwide)[names(testwide) %in% "variable"] <- "Test"
+
+
+##################################################
+# Individual test results - proportions
+testwide.prop <- dcast(
+                     melt(testres,
+                          id.var = "StudyId", 
+                          measure.var = c("tst", "qft", "tspot")),
+                     variable ~ value,
+                     fun.agg = function(x) { length(x) / nrow(testres) * 100}
+)
+
+# Tidy up for printing
+# Prettier test names
+testwide.prop$variable <- toupper(as.character(testwide.prop$variable))
+
+# Better column order
+testwide.prop <- testwide.prop[ , c("variable", "Negative", "Positive", 
+                                    "Borderline", "Test Not Performed", "NA")]
+
+
+# Pretty names
+names(testwide.prop)[names(testwide.prop) %in% "variable"] <- "Test"
+
+
+
+##################################################
+# Aggregate by result class
 testagg <- count(testres, var = c("result_class"))
 
+# Make a factor of result_class by descending frequency for plotting later on
+testres$plot_class <- factor(testres$result_class,
+                             levels = arrange(testagg, freq)$result_class)
+
+
+
+##################################################
+# Make a factor of result_class for the table - this is more a logical ordering:
+# Triple-neg, triple-pos, isolated-pos, isolated-neg
 testagg$result_class <- factor(testagg$result_class,
                                levels = c("Triple Negative", "Triple Positive",
                                           "Isolated TST+", "Isolated QFT+", "Isolated TSPOT+",
                                           "Isolated TST-", "Isolated QFT-", "Isolated TSPOT-",
                                           "Inconclusive")
 )
+```
 
-testagg$classprop <- round(testagg$freq / nrow(testres) * 100, 2)
 
-names(testagg) <- c("Results", "Freq", "Proportion")
+Count:
 
-dfprint(arrange(testagg, Results))
+```{r,echo=FALSE,results='asis'}
 
-# MATT: make two separate factors - one for sorting by name, one for sorting by proportion.
-# Use the first for the table, second for the plot
+# Number positive on each test
+dfprint(testwide)
 
 ```
 
+Proportion:
+
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+# Proportion positive on each test
+dfprint(testwide.prop)
+
+```
+
+
+
+
 ```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 8, fig.height = 8}
 
-ggplot(testagg, aes(x = as.character(Results), weight = Freq)) +
+
+ggplot(testres, aes(x = plot_class)) +
   geom_bar() +
-  coord_flip()
+  coord_flip() +
+  labs(x = "Number of Participants", y = "Result")
+
+```
+
+
+```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+
+# Add a proportion-of-enrolled indicator
+testagg$classprop <- round(testagg$freq / nrow(testres) * 100, 2)
+
+# Pretty names
+names(testagg) <- c("Results", "Freq", "Proportion")
+
+
+dfprint(arrange(testagg, Results))
 
 ```
 
