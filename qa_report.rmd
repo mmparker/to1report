@@ -82,7 +82,7 @@ enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple N
 
 dfprint <- function(df) {
     print(
-        xtable(format(df), 
+        xtable(format(df, na.encode = FALSE), 
                align = c("l", "l", rep("c", ncol(df) - 1))
         ),
         type = "html",
