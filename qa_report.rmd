@@ -80,9 +80,9 @@ enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple N
 # *print() for xtable throws a tantrum over Date and POSIXct variables,
 # so they have to be converted to character before printing 
 
-dfprint <- function(df) {
+dfprint <- function(df, printdigits = 2) {
     print(
-        xtable(format(df, na.encode = FALSE), 
+        xtable(format(df, na.encode = FALSE, digits = printdigits, nsmall = printdigits), 
                align = c("l", "l", rep("c", ncol(df) - 1))
         ),
         type = "html",
