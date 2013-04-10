@@ -49,10 +49,11 @@ hr {
 
 
 
-```{r, echo=FALSE,results='hide',message=FALSE,warning=FALSE}
+```{r initialize, echo=FALSE,results='hide',message=FALSE,warning=FALSE}
 # Initialize!
 
-# Stop R from interpreting strings as factors. When you want factors, you'll know it.
+# Stop R from interpreting strings as factors. 
+# When you want factors, you'll know it.
 options(stringsAsFactors = FALSE)
 
 # Load up the requisite packages
@@ -76,13 +77,15 @@ local_facts <- read.csv("local_facts.csv")
 # Load the latest cleaned data
 load(local_facts$datapath)
 
-# Set aside those who were successfully enrolled - we'll generally disregard those who declined
+# Set aside those who were successfully enrolled - we'll generally 
+# disregard those who declined
 # or didn't complete enrollment 
-enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple Negative", "Open")]
+enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% 
+                                    c("Triple Negative", "Open")]
 
 
 # Set up default print arguments for printing tables:
-# xtable() adds attributes to the data.frame to make it more suitable for display
+# xtable() makes data.frames more suitable for display
 # format() converts all of the data.frame comments to character*;
 # print() writes the xtable object to HTML
 
@@ -91,7 +94,10 @@ enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple N
 
 dfprint <- function(df, printdigits = 2) {
     print(
-        xtable(format(df, na.encode = FALSE, digits = printdigits, nsmall = printdigits), 
+        xtable(format(df, 
+                      na.encode = FALSE, 
+                      digits = printdigits, 
+                      nsmall = printdigits), 
                align = c("l", "l", rep("c", ncol(df) - 1))
         ),
         type = "html",
@@ -119,7 +125,8 @@ total_enrolled <- nrow(subset(to1clean$master, VisitDate >= as.Date(local_facts$
 total_remain <- local_facts$enroll_target - total_enrolled
 
 # Weeks remaining in the enrollment period
-weeks_left <- new_interval(Sys.Date(), local_facts$period_end) / duration(num = 1, units = "weeks")
+weeks_left <- new_interval(Sys.Date(), local_facts$period_end) / 
+              duration(num = 1, units = "weeks")
 
 # Average weekly enrollment to make target
 weekly_target <- round(total_remain / weeks_left, 1)
@@ -135,7 +142,8 @@ Average Weekly Enrollment Required: `r weekly_target`
 
 ```{r,results="hide",fig.width = 12, fig.height = 6}
 # Plot enrollment progress to date
-enrolled_dates <- to1clean$master$VisitDate[to1clean$master$StudyId %in% enrolled]
+enrolled_dates <- to1clean$master$VisitDate[to1clean$master$StudyId %in% 
+                                            enrolled]
 
 enroll_progress_plot(enrolled_dates,
                      target = local_facts$enroll_target,
@@ -152,13 +160,15 @@ enroll_progress_plot(enrolled_dates,
 ```{r,results="hide",fig.width = 8, fig.height = 8}
 
 # Tally up participants by their country of birth
-birthco <- arrange(count(to1clean$master, var = "BirthCountry"), freq, BirthCountry)
+birthco <- arrange(count(to1clean$master, var = "BirthCountry"), 
+                   freq, BirthCountry)
 
 # BirthCountry = "" or NA indicates a pre-enrolled person
 birthco$BirthCountry[birthco$BirthCountry %in% c("", NA)] <- "Pre-enrolled"
 
 # Make BirthCountry a factor - this ensures descending order of the bars
-birthco$BirthCountry <- factor(birthco$BirthCountry,  levels = birthco$BirthCountry)
+birthco$BirthCountry <- factor(birthco$BirthCountry,  
+                               levels = birthco$BirthCountry)
 
 
 
@@ -247,8 +257,10 @@ testres$plot_class <- factor(testres$result_class,
 # Triple-neg, triple-pos, isolated-pos, isolated-neg
 testagg$result_class <- factor(testagg$result_class,
                                levels = c("Triple Negative", "Triple Positive",
-                                          "Isolated TST+", "Isolated QFT+", "Isolated TSPOT+",
-                                          "Isolated TST-", "Isolated QFT-", "Isolated TSPOT-",
+                                          "Isolated TST+", "Isolated QFT+", 
+                                          "Isolated TSPOT+",
+                                          "Isolated TST-", "Isolated QFT-", 
+                                          "Isolated TSPOT-",
                                           "Inconclusive")
 )
 ```
@@ -324,7 +336,8 @@ dfprint(arrange(testagg, Results))
 ```{r}
 fu_report <- calc_fu(to1clean)
 
-names(fu_report) <- c("StudyID", "Enroll Date", "FU Starts", "Fu Ends", "Eligible for FU",
+names(fu_report) <- c("StudyID", "Enroll Date", 
+                      "FU Starts", "Fu Ends", "Eligible for FU",
                       "FU Cycle", "Days Left", "Completed")
 
 
@@ -341,7 +354,8 @@ if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
 tripnegtoclose <- arrange(closed_check(to1clean), VisitDate)
 
 # Pretty names
-names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date", "TST Neg?", "QFT Neg?",
+names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date", 
+                           "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
 dfprint(tripnegtoclose)
@@ -376,11 +390,13 @@ dfprint(winprob)
 testres <- compile_results(to1clean)
 
 missingtest <- subset(testres,
-                      subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & StudyId %in% enrolled,
+                      subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & 
+                               StudyId %in% enrolled,
                       select = c("StudyId", "VisitDate", "tst", "qft", "tspot"))
 
 # Pretty names
-names(missingtest) <- c("StudyId", "Visit Date", "TST Result", "QFT Result", "TSPOT Result")
+names(missingtest) <- c("StudyId", "Visit Date", 
+                        "TST Result", "QFT Result", "TSPOT Result")
 
 
 dfprint(missingtest)
@@ -443,7 +459,8 @@ dfprint(htwts$missingdf)
 lotfreq <- count(to1clean$skintest, "PpdLotNumber")
 
 rare_tst_lot <- subset(to1clean$skintest,
-                       subset = PpdLotNumber %in% lotfreq$PpdLotNumber[lotfreq$freq < 10],
+                       subset = PpdLotNumber %in% 
+                                lotfreq$PpdLotNumber[lotfreq$freq < 10],
                        select = c("StudyId", "TstPlacedBy", "PpdLotNumber"))
 
 dfprint(arrange(rare_tst_lot, PpdLotNumber))
