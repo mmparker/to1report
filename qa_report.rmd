@@ -73,11 +73,21 @@ enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% c("Triple N
 
 
 # Set up default print arguments for printing tables:
+# xtable() adds attributes to the data.frame to make it more suitable for display
+# format() converts all of the data.frame comments to character*;
+# print() writes the xtable object to HTML
+
+# *print() for xtable throws a tantrum over Date and POSIXct variables,
+# so they have to be converted to character before printing 
+
 dfprint <- function(df) {
-    print(xtable(df, align = c("l", "l", rep("c", ncol(df) - 1))),
-          type = "html",
-          include.rownames = FALSE,
-          NA.string = "-")
+    print(
+        xtable(format(df), 
+               align = c("l", "l", rep("c", ncol(df) - 1))
+        ),
+        type = "html",
+        include.rownames = FALSE,
+        NA.string = "-")
 }
 
 
@@ -226,10 +236,11 @@ if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
 
 ### Triple-Negative Participants to Close
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
-tripnegtoclose <- closed_check(to1clean)
+# Identify triple neg participants to close (and sort by visit date)
+tripnegtoclose <- arrange(closed_check(to1clean), VisitDate)
 
 # Pretty names
-names(tripnegtoclose) <- c("StudyId", "Status", "TST Neg?", "QFT Neg?",
+names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date", "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
 dfprint(tripnegtoclose)
@@ -245,9 +256,6 @@ dfprint(tripnegtoclose)
 ```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
 winprob <- tst_win_check(to1clean)
 
-# xtable craps itself on POSIXct, sadly...
-winprob$dt_placed <- as.character(winprob$dt_placed)
-winprob$dt_read <- as.character(winprob$dt_read)
 
 # Pretty names
 names(winprob) <- c("StudyId",
@@ -268,10 +276,10 @@ testres <- compile_results(to1clean)
 
 missingtest <- subset(testres,
                       subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & StudyId %in% enrolled,
-                      select = c("StudyId", "tst", "qft", "tspot"))
+                      select = c("StudyId", "VisitDate", "tst", "qft", "tspot"))
 
 # Pretty names
-names(missingtest) <- c("StudyId", "TST Result", "QFT Result", "TSPOT Result")
+names(missingtest) <- c("StudyId", "Visit Date", "TST Result", "QFT Result", "TSPOT Result")
 
 
 dfprint(missingtest)
@@ -289,9 +297,6 @@ names(ageprob)[names(ageprob) %in% "preenroll_age"] <- "Pre-enroll Age"
 names(ageprob)[names(ageprob) %in% "calc_age"] <- "Calculated Age"
 names(ageprob)[names(ageprob) %in% "age_diff"] <- "Difference"
 
-# xtable craps itself on Dates, sadly...
-ageprob$BirthDate <- as.character(ageprob$BirthDate)
-ageprob$VisitDate <- as.character(ageprob$VisitDate)
 
 dfprint(ageprob)
 ```
