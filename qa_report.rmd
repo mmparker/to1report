@@ -49,17 +49,26 @@ hr {
 
 
 
-```{r,echo=FALSE, results="as-is",message=FALSE, warning=FALSE,error=FALSE}
+```{r, echo=FALSE,results='hide',message=FALSE,warning=FALSE}
 # Initialize!
 
 # Stop R from interpreting strings as factors. When you want factors, you'll know it.
 options(stringsAsFactors = FALSE)
 
 # Load up the requisite packages
+library(knitr)     # It's a knitr document, after all...
 library(to1check)  # All TO1-related functions
 library(plyr)      # For the count() and arrange() functions
 library(xtable)    # For printing data.frames nicely
 library(lubridate) # For calculating number of weeks remaining
+
+# Set default chunk options
+opts_chunk$set(echo = FALSE,
+               results = 'asis',
+               message = FALSE,
+               warning = FALSE,
+               error = TRUE)
+
 
 # Load the local info (edit this if your results are wrong)
 local_facts <- read.csv("local_facts.csv")
@@ -101,7 +110,7 @@ dfprint <- function(df, printdigits = 2) {
 
 ## Enrollment Progress
 ---------------------
-```{r,echo=FALSE, results="asis",message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 
 # Total enrolled so far (I need a better measure of this)
 total_enrolled <- nrow(subset(to1clean$master, VisitDate >= as.Date(local_facts$period_start)))
@@ -124,7 +133,7 @@ Average Weekly Enrollment Required: `r weekly_target`
 
 
 
-```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 12, fig.height = 6}
+```{r,results="hide",fig.width = 12, fig.height = 6}
 # Plot enrollment progress to date
 enrolled_dates <- to1clean$master$VisitDate[to1clean$master$StudyId %in% enrolled]
 
@@ -140,7 +149,7 @@ enroll_progress_plot(enrolled_dates,
 
 
 ### Participants by Country of Origin
-```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 8, fig.height = 8}
+```{r,results="hide",fig.width = 8, fig.height = 8}
 
 # Tally up participants by their country of birth
 birthco <- arrange(count(to1clean$master, var = "BirthCountry"), freq, BirthCountry)
@@ -171,7 +180,7 @@ ggplot(birthco, aes(x = BirthCountry, weight = freq)) +
 
 ### Test Results
 
-```{r,echo=FALSE,results='hide',message=FALSE, warning=FALSE,error=FALSE}
+```{r,results='hide'}
 ##################################################
 # Summarize participants' individual test results
 testres <- compile_results(to1clean)
@@ -247,7 +256,7 @@ testagg$result_class <- factor(testagg$result_class,
 
 Count:
 
-```{r,echo=FALSE,results='asis'}
+```{r}
 
 # Number positive on each test
 dfprint(testwide)
@@ -256,7 +265,7 @@ dfprint(testwide)
 
 Proportion:
 
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 # Proportion positive on each test
 dfprint(testwide.prop)
 
@@ -265,7 +274,7 @@ dfprint(testwide.prop)
 
 
 
-```{r,echo=FALSE, results="hide",message=FALSE, warning=FALSE,error=FALSE,fig.width = 8, fig.height = 8}
+```{r, results="hide",fig.width = 8, fig.height = 8}
 
 
 ggplot(testres, aes(x = plot_class)) +
@@ -276,7 +285,7 @@ ggplot(testres, aes(x = plot_class)) +
 ```
 
 
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 
 # Add a proportion-of-enrolled indicator
 testagg$classprop <- round(testagg$freq / nrow(testres) * 100, 2)
@@ -312,7 +321,7 @@ dfprint(arrange(testagg, Results))
 -----------------------------------
 
 ### Participants Eligible for Follow-Up
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 fu_report <- calc_fu(to1clean)
 
 names(fu_report) <- c("StudyID", "Enroll Date", "FU Starts", "Fu Ends", "Eligible for FU",
@@ -327,7 +336,7 @@ if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
 
 
 ### Triple-Negative Participants to Close
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 # Identify triple neg participants to close (and sort by visit date)
 tripnegtoclose <- arrange(closed_check(to1clean), VisitDate)
 
@@ -345,7 +354,7 @@ dfprint(tripnegtoclose)
 ------------------------
 
 ### Participants with TSTs Read Outside of the 44-76 Hour Window
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 winprob <- tst_win_check(to1clean)
 
 
@@ -362,7 +371,7 @@ dfprint(winprob)
 
 
 ### Participants with Missing TST, QFT, or TSPOT Results
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 # Identify participants with a missing test
 testres <- compile_results(to1clean)
 
@@ -381,7 +390,7 @@ dfprint(missingtest)
 
 ### Participants with Pre-enrollment vs. Calculated Age Discrepancies
 Age is calculated from participant's reported date of birth and their visit date.
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 ageprob <- age_check(to1clean)
 
 # Pretty names
@@ -396,7 +405,7 @@ dfprint(ageprob)
 
 
 ### Height and Weight
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE,fig.width=8}
+```{r,fig.width=8}
 htwts <- htwt_check(to1clean)
 
 # Show the plot
@@ -406,7 +415,7 @@ htwts$plot
 
 
 #### Participants with most-outlying heights/weights:
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 # List the outliers
 
 # Slightly nicer names
@@ -418,7 +427,7 @@ dfprint(htwts$outlierdf)
 
 
 #### Enrolled participants missing height and/or weight:
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 # List those missing heights or weights
 
 # Slightly nicer names
@@ -430,7 +439,7 @@ dfprint(htwts$missingdf)
 
 
 ### TSTs with Rare PPD Lot Numbers
-```{r,echo=FALSE,results='asis',message=FALSE, warning=FALSE,error=FALSE}
+```{r}
 lotfreq <- count(to1clean$skintest, "PpdLotNumber")
 
 rare_tst_lot <- subset(to1clean$skintest,
