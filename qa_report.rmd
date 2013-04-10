@@ -2,6 +2,10 @@
 
 <style type="text/css">
 
+body {
+  padding-bottom: 20%;
+}
+
 table {
   border: 1px solid #808080;
   border-collapse: collapse;
