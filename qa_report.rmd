@@ -163,8 +163,10 @@ ggplot(birthco, aes(x = BirthCountry, weight = freq)) +
 
 ```
 
-### Participant Ages
 
+```{r}
+### Participant Ages
+```
 
 
 ### Test Results
@@ -287,20 +289,23 @@ dfprint(arrange(testagg, Results))
 
 ```
 
+
+```{r}
 ### Test Results by Country of Origin
+```
 
 
-
+```{r}
 ### Test Results by Risk Factor
+```
 
 
-
-
+```{r}
 ### Treatment Acceptance
+```
 
 
 
-### 
 
 
 ## Participants with Action Needed
