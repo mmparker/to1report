@@ -140,6 +140,8 @@ Total Enrolled to Date: `r total_enrolled`
 
 Enrollment Remaining: `r total_remain`
 
+Weeks Remaining (approximately): `r weeks_left`
+
 Average Weekly Enrollment Required: `r weekly_target`
 
 
