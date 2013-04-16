@@ -467,9 +467,13 @@ lotfreq <- count(to1clean$skintest, "PpdLotNumber")
 rare_tst_lot <- subset(to1clean$skintest,
                        subset = PpdLotNumber %in% 
                                 lotfreq$PpdLotNumber[lotfreq$freq < 10],
-                       select = c("StudyId", "TstPlacedBy", "PpdLotNumber"))
+                       select = c("StudyId", "dt_placed", "TstPlacedBy", "PpdLotNumber"))
 
-dfprint(arrange(rare_tst_lot, PpdLotNumber))
+# Pretty names
+names(rare_tst_lot) <- c("StudyId", "Date Placed", "Placed By", "PPD Lot #")
+
+
+dfprint(arrange(rare_tst_lot, `PPD Lot #`))
 ```
 
 
