@@ -343,7 +343,7 @@ dfprint(arrange(testagg, Results))
 fu_report <- calc_fu(to1clean)
 
 names(fu_report) <- c("StudyID", "Enroll Date", 
-                      "FU Starts", "Fu Ends", "Eligible for FU",
+                      "FU Starts", "FU Ends", "Eligible for FU",
                       "FU Cycle", "Days Left", "Completed")
 
 
