@@ -364,7 +364,9 @@ names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date",
                            "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
-dfprint(tripnegtoclose)
+if(nrow(fu_report) > 0) { dfprint(tripnegtoclose) } else {
+  cat("No open triple-negative participants at this time.")
+} 
 ```
 
 
