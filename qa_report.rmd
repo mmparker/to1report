@@ -399,7 +399,7 @@ if(nrow(winprob) > 0) { dfprint(winprob) } else {
 # Identify participants with a missing test
 testres <- compile_results(to1clean)
 
-missingtest <- subset(testres,
+missingtest <- subset(arrange(testres, VisitDate),
                       subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & 
                                StudyId %in% enrolled,
                       select = c("StudyId", "VisitDate", "tst", "qft", "tspot"))
