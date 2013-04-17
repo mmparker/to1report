@@ -364,7 +364,7 @@ names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date",
                            "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
-if(nrow(fu_report) > 0) { dfprint(tripnegtoclose) } else {
+if(nrow(tripnegtoclose) > 0) { dfprint(tripnegtoclose) } else {
   cat("No open triple-negative participants at this time.")
 } 
 ```
@@ -387,7 +387,9 @@ names(winprob) <- c("StudyId",
                     "Hours Between")
 
 
-dfprint(winprob)
+if(nrow(winprob) > 0) { dfprint(winprob) } else {
+  cat("All TSTs read within the protocol window.")
+} 
 ```
 
 
@@ -407,7 +409,9 @@ names(missingtest) <- c("StudyId", "Visit Date",
                         "TST Result", "QFT Result", "TSPOT Result")
 
 
-dfprint(missingtest)
+if(nrow(missingtest) > 0) { dfprint(missingtest) } else {
+  cat("All participants have complete test results at this time.")
+} 
 ```
 
 
@@ -423,7 +427,9 @@ names(ageprob)[names(ageprob) %in% "calc_age"] <- "Calculated Age"
 names(ageprob)[names(ageprob) %in% "age_diff"] <- "Difference"
 
 
-dfprint(ageprob)
+if(nrow(ageprob) > 0) { dfprint(ageprob) } else {
+  cat("All pre-enrollment and calculated ages match.")
+} 
 ```
 
 
@@ -457,7 +463,9 @@ dfprint(htwts$outlierdf)
 # Slightly nicer names
 names(htwts$missingdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-dfprint(htwts$missingdf)
+if(nrow(htwts$missingdf) > 0) { dfprint(htwts$missingdf) } else {
+  cat("All participants have height and weight recorded.")
+} 
 ```
 
 
@@ -466,16 +474,21 @@ dfprint(htwts$missingdf)
 ```{r}
 lotfreq <- count(to1clean$skintest, "PpdLotNumber")
 
+n.rare <- 10
+
 rare_tst_lot <- subset(to1clean$skintest,
                        subset = PpdLotNumber %in% 
-                                lotfreq$PpdLotNumber[lotfreq$freq < 10],
+                                lotfreq$PpdLotNumber[lotfreq$freq < n.rare],
                        select = c("StudyId", "dt_placed", "TstPlacedBy", "PpdLotNumber"))
 
 # Pretty names
 names(rare_tst_lot) <- c("StudyId", "Date Placed", "Placed By", "PPD Lot #")
 
 
-dfprint(arrange(rare_tst_lot, `PPD Lot #`))
+if(nrow(htwts$missingdf) > 0) { 
+    dfprint(arrange(rare_tst_lot, `PPD Lot #`)) } else {
+  cat("All participants TST lots have", n.rare, "or more placements recorded.")
+} 
 ```
 
 
