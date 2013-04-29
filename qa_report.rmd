@@ -366,9 +366,9 @@ if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
 
 
 ### Triple-Negative Participants to Close
-```{r}
+```{r to_close}
 # Identify triple neg participants to close (and sort by visit date)
-tripnegtoclose <- arrange(closed_check(to1clean), VisitDate)
+tripnegtoclose <- arrange(to_close(to1clean), VisitDate)
 
 # Pretty names
 names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date", 
@@ -378,6 +378,22 @@ names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date",
 if(nrow(tripnegtoclose) > 0) { dfprint(tripnegtoclose) } else {
   cat("No open triple-negative participants at this time.")
 } 
+```
+
+
+
+### Participants Closed Incorrectly
+```{r closed_wrongly}
+# Identify triple neg participants to close (and sort by visit date)
+closedwrongly <- arrange(closed_check(to1clean), close_problem, VisitDate)
+
+# Pretty names
+names(closedwrongly) <- c("StudyId", "Visit Date", "Reason Closed", "Problem")
+
+if(nrow(closedwrongly) > 0) { dfprint(closedwrongly) } else {
+  cat("There are no incorrectly-closed participants at this time.")
+} 
+
 ```
 
 
