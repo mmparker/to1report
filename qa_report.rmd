@@ -81,11 +81,20 @@ local_facts <- read.csv("local_facts.csv")
 # Load the latest cleaned data
 load(local_facts$datapath)
 
-# Set aside those who were successfully enrolled - we'll generally 
-# disregard those who declined
-# or didn't complete enrollment 
-enrolled <- to1clean$master$StudyId[to1clean$master$CloseReason %in% 
-                                    c("Triple Negative", "Open")]
+# Set aside those who were successfully enrolled during the 
+# in question - we'll generally disregard those who declined 
+# or who didn't complete enrollment 
+
+enrolled <- with(to1clean$master,
+    StudyId[!CloseReason %in% c("Didn't complete enrollment", "Withdrew") &
+            VisitDate >= as.Date(local_facts$period_start) &
+            VisitDate <= as.Date(local_facts$period_end)]
+)
+
+
+# Set up subsets of just the participants enrolled this period
+enrolled_master <- to1clean$master[to1clean$master$StudyId %in% enrolled, ]
+
 
 
 # Set up default print arguments for printing tables:
@@ -123,7 +132,7 @@ dfprint <- function(df, printdigits = 2) {
 ```{r}
 
 # Total enrolled so far (I need a better measure of this)
-total_enrolled <- nrow(subset(to1clean$master, VisitDate >= as.Date(local_facts$period_start)))
+total_enrolled <- length(enrolled)
 
 # Total remaining to meet local target
 total_remain <- local_facts$enroll_target - total_enrolled
@@ -148,8 +157,7 @@ Average Weekly Enrollment Required: `r weekly_target`
 
 ```{r,results="hide",fig.width = 12, fig.height = 6}
 # Plot enrollment progress to date
-enrolled_dates <- to1clean$master$VisitDate[to1clean$master$StudyId %in% 
-                                            enrolled]
+enrolled_dates <- enrolled_master$VisitDate
 
 enroll_progress_plot(enrolled_dates,
                      target = local_facts$enroll_target,
@@ -166,7 +174,7 @@ enroll_progress_plot(enrolled_dates,
 ```{r,results="hide",fig.width = 8, fig.height = 8}
 
 # Tally up participants by their country of birth
-birthco <- arrange(count(to1clean$master, var = "BirthCountry"), 
+birthco <- arrange(count(enrolled_master, var = "BirthCountry"), 
                    freq, BirthCountry)
 
 # BirthCountry = "" or NA indicates a pre-enrolled person
@@ -201,10 +209,13 @@ ggplot(birthco, aes(x = BirthCountry, weight = freq)) +
 # Summarize participants' individual test results
 testres <- compile_results(to1clean)
 
+testres_enrolled <- testres[testres$StudyId %in% enrolled, ]
 
-# Cast all results into a wide table
+
+# Cast all results into a wide table - keep only the results of
+# participants enrolled in this period
 testwide <- dcast(
-                melt(testres,
+                melt(testres_enrolled,
                      id.var = "StudyId", 
                      measure.var = c("tst", "qft", "tspot")),
                 variable ~ value,
@@ -227,7 +238,7 @@ names(testwide)[names(testwide) %in% "variable"] <- "Test"
 ##################################################
 # Individual test results - proportions
 testwide.prop <- dcast(
-                     melt(testres,
+                     melt(testres_enrolled,
                           id.var = "StudyId", 
                           measure.var = c("tst", "qft", "tspot")),
                      variable ~ value,
@@ -250,11 +261,11 @@ names(testwide.prop)[names(testwide.prop) %in% "variable"] <- "Test"
 
 ##################################################
 # Aggregate by result class
-testagg <- count(testres, var = c("result_class"))
+testagg <- count(testres_enrolled, var = c("result_class"))
 
 # Make a factor of result_class by descending frequency for plotting later on
-testres$plot_class <- factor(testres$result_class,
-                             levels = arrange(testagg, freq)$result_class)
+testres_enrolled$plot_class <- factor(testres_enrolled$result_class,
+                                      levels = arrange(testagg, freq)$result_class)
 
 
 
@@ -295,7 +306,7 @@ dfprint(testwide.prop)
 ```{r, results="hide",fig.width = 8, fig.height = 8}
 
 
-ggplot(testres, aes(x = plot_class)) +
+ggplot(testres_enrolled, aes(x = plot_class)) +
   geom_bar() +
   coord_flip() +
   labs(x = "Number of Participants", y = "Result")
@@ -379,15 +390,16 @@ if(nrow(tripnegtoclose) > 0) { dfprint(tripnegtoclose) } else {
 ```{r}
 winprob <- tst_win_check(to1clean)
 
+winprob_enrolled <- winprob[winprob$StudyId %in% enrolled, ]
 
 # Pretty names
-names(winprob) <- c("StudyId",
-                    "Date/Time Placed", "Placed By",
-                    "Date/Time Read", "Read By",
-                    "Hours Between")
+names(winprob_enrolled) <- c("StudyId",
+                             "Date/Time Placed", "Placed By",
+                             "Date/Time Read", "Read By",
+                             "Hours Between")
 
 
-if(nrow(winprob) > 0) { dfprint(winprob) } else {
+if(nrow(winprob_enrolled) > 0) { dfprint(winprob_enrolled) } else {
   cat("All TSTs read within the protocol window.")
 } 
 ```
@@ -399,7 +411,9 @@ if(nrow(winprob) > 0) { dfprint(winprob) } else {
 # Identify participants with a missing test
 testres <- compile_results(to1clean)
 
-missingtest <- subset(arrange(testres, VisitDate),
+testres_enrolled <- testres[testres$StudyId %in% enrolled, ]
+
+missingtest <- subset(arrange(testres_enrolled, VisitDate),
                       subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & 
                                StudyId %in% enrolled,
                       select = c("StudyId", "VisitDate", "tst", "qft", "tspot"))
@@ -421,13 +435,15 @@ Age is calculated from participant's reported date of birth and their visit date
 ```{r}
 ageprob <- age_check(to1clean)
 
+ageprob_enrolled <- ageprob[ageprob$StudyId %in% enrolled, ]
+
 # Pretty names
-names(ageprob)[names(ageprob) %in% "preenroll_age"] <- "Pre-enroll Age"
-names(ageprob)[names(ageprob) %in% "calc_age"] <- "Calculated Age"
-names(ageprob)[names(ageprob) %in% "age_diff"] <- "Difference"
+names(ageprob_enrolled)[names(ageprob_enrolled) %in% "preenroll_age"] <- "Pre-enroll Age"
+names(ageprob_enrolled)[names(ageprob_enrolled) %in% "calc_age"] <- "Calculated Age"
+names(ageprob_enrolled)[names(ageprob_enrolled) %in% "age_diff"] <- "Difference"
 
 
-if(nrow(ageprob) > 0) { dfprint(ageprob) } else {
+if(nrow(ageprob_enrolled) > 0) { dfprint(ageprob_enrolled) } else {
   cat("All pre-enrollment and calculated ages match.")
 } 
 ```
@@ -446,24 +462,26 @@ htwts$plot
 
 #### Participants with most-outlying heights/weights:
 ```{r}
-# List the outliers
+# Subset to this enrollment period
+htwtoutliers_enrolled <- htwts$outlierdf[htwts$outlierdf$StudyId %in% enrolled, ]
 
 # Slightly nicer names
-names(htwts$outlierdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
+names(htwtoutliers_enrolled) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-dfprint(htwts$outlierdf)
+dfprint(htwtoutliers_enrolled)
 ```
 
 
 
 #### Enrolled participants missing height and/or weight:
 ```{r}
-# List those missing heights or weights
+# Subset to this enrollment period
+htwtmissing_enrolled <- htwts$missingdf[htwts$missingdf$StudyId %in% enrolled, ]
 
 # Slightly nicer names
-names(htwts$missingdf) <- c("StudyId", "Height (inches)", "Weight (pounds)")
+names(htwtmissing_enrolled) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-if(nrow(htwts$missingdf) > 0) { dfprint(htwts$missingdf) } else {
+if(nrow(htwtmissing_enrolled) > 0) { dfprint(htwtmissing_enrolled) } else {
   cat("All participants have height and weight recorded.")
 } 
 ```
@@ -474,7 +492,7 @@ if(nrow(htwts$missingdf) > 0) { dfprint(htwts$missingdf) } else {
 ```{r}
 lotfreq <- count(to1clean$skintest, "PpdLotNumber")
 
-n.rare <- 10
+n.rare <- 5
 
 rare_tst_lot <- subset(to1clean$skintest,
                        subset = PpdLotNumber %in% 
