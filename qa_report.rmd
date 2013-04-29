@@ -519,7 +519,7 @@ rare_tst_lot <- subset(to1clean$skintest,
 names(rare_tst_lot) <- c("StudyId", "Date Placed", "Placed By", "PPD Lot #")
 
 
-if(nrow(htwts$missingdf) > 0) { 
+if(nrow(rare_tst_lot) > 0) { 
     dfprint(arrange(rare_tst_lot, `PPD Lot #`)) } else {
   cat("All participants TST lots have", n.rare, "or more placements recorded.")
 } 
