@@ -228,7 +228,7 @@ testwide$variable <- toupper(as.character(testwide$variable))
 
 # Better column order
 testwide <- testwide[ , c("variable", "Negative", "Positive", 
-                          "Borderline", "Test Not Performed", "NA")]
+                          "Borderline", "NA")]
 
 
 # Pretty names
@@ -251,7 +251,7 @@ testwide.prop$variable <- toupper(as.character(testwide.prop$variable))
 
 # Better column order
 testwide.prop <- testwide.prop[ , c("variable", "Negative", "Positive", 
-                                    "Borderline", "Test Not Performed", "NA")]
+                                    "Borderline", "NA")]
 
 
 # Pretty names
