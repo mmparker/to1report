@@ -167,6 +167,27 @@ enroll_progress_plot(enrolled_dates,
 
 ```
 
+```{r weekly_enroll}
+
+# Show enrollment from the last x weeks
+
+# Convert enrollment dates to weeks
+enrolled_weeks <- data.frame(enroll_date = enrolled_dates,
+                             enroll_week = format(enrolled_dates, "%Y-%W"))
+
+# Aggregate
+weekly_enrolled <- ddply(enrolled_weeks, .var = "enroll_week", .fun = summarise,
+    `Week` = min(enroll_date, na.rm = TRUE),
+    `Number Enrolled` = length(enroll_date)
+)
+
+cat("Enrollment Totals for Last Eight Weeks \n")
+dfprint(tail(weekly_enrolled[ , c("Week", "Number Enrolled")], 8))
+
+
+
+
+```
 
 
 
