@@ -3,10 +3,13 @@
 <style type="text/css">
 
 body {
+  text-align: center;
   padding-bottom: 20%;
 }
 
 table {
+  margin-left: auto;
+  margin-right: auto;
   border: 1px solid #808080;
   border-collapse: collapse;
 }
@@ -26,12 +29,12 @@ td {
 }
 
 .maintitle {
-  text-align: left;
+  text-align: center;
   padding-top: 0px;
 }
 
 h2 {
-  text-align: left;
+  text-align: center;
   padding-top: 80px;
 }
 
