@@ -414,7 +414,7 @@ closedwrongly <- arrange(closed_check(to1clean), close_problem, VisitDate)
 # Pretty names
 names(closedwrongly) <- c("StudyId", "Visit Date", "Reason Closed", "Problem")
 
-if(nrow(closedwrongly) > 0) { dfprint(closedwrongly) } else {
+if(nrow(closedwrongly) > 0) { dfprint(arrange(closedwrongly, `Visit Date`)) } else {
   cat("There are no incorrectly-closed participants at this time.")
 } 
 
