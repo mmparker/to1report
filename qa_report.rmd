@@ -266,7 +266,7 @@ testwide.prop <- dcast(
                           id.var = "StudyId", 
                           measure.var = c("tst", "qft", "tspot")),
                      variable ~ value,
-                     fun.agg = function(x) { length(x) / nrow(testres) * 100}
+                     fun.agg = function(x) { length(x) / nrow(testres_enrolled) * 100}
 )
 
 # Tidy up for printing
@@ -341,7 +341,7 @@ ggplot(testres_enrolled, aes(x = plot_class)) +
 ```{r}
 
 # Add a proportion-of-enrolled indicator
-testagg$classprop <- round(testagg$freq / nrow(testres) * 100, 2)
+testagg$classprop <- round(testagg$freq / nrow(testres_enrolled) * 100, 2)
 
 # Pretty names
 names(testagg) <- c("Results", "Freq", "Proportion")
