@@ -126,7 +126,7 @@ dfprint <- function(df, printdigits = 2) {
 
 ```
 
-<h1 class='maintitle'>TBESC TO 1 Site Report: `r local_facts$site`</h1>
+<h1 class='maintitle'>TBESC TO 1 Status Report: `r local_facts$site`</h1>
 <h3 class='maintitle'>Enrollment Period: `r paste(local_facts$period_start, "through", local_facts$period_end)`</h3>
 <span class='maintitle'>Report generated at `r format(Sys.time())`</span>
 
