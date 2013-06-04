@@ -69,6 +69,7 @@ library(to1check)  # All TO1-related functions
 library(plyr)      # For the count() and arrange() functions
 library(xtable)    # For printing data.frames nicely
 library(lubridate) # For calculating number of weeks remaining
+library(tbdiag)    # For checking QFT and TSPOT results
 
 # Set default chunk options
 opts_chunk$set(echo = FALSE,
@@ -251,6 +252,93 @@ if(nrow(closedwrongly) > 0) { dfprint(arrange(closedwrongly, `Visit Date`)) } el
 
 ## Data Quality Checks
 ------------------------
+
+
+### QFT Results to Double-Check
+```{r qftcheck}
+
+# Calculate QFT results using tbdiag
+qfts <- subset(to1clean$qft,
+               select = c("StudyId", "dt_placed", 
+                          "nil", "tb", "mito", "result",
+                          "nil.num", "tb.num", "mito.num",
+                          "rerun_nil", "rerun_tb", "rerun_mito", "rerun_result",
+                          "rerun_nil.num", "rerun_tb.num", "rerun_mito.num")
+)
+               
+qfts$result_check <- with(qfts, 
+                          qft.interp(nil = nil.num, 
+                                     tb = tb.num, 
+                                     mito = mito.num,
+                                     verbosity = "terse")
+)
+
+
+# Identify any discordant results
+qfts_discord <- subset(qfts,
+                       subset = result != result_check,
+                       select = c("StudyId", "dt_placed", 
+                                  "nil", "tb", "mito", 
+                                  "result", "result_check")
+)
+
+
+# Pretty names
+names(qfts_discord) <- c("StudyId", "Date Placed", 
+                         "Nil", "TB Antigen", "Mitogen",
+                         "DMS Result", "Calculated Result")
+
+
+# Print
+if(nrow(qfts_discord) > 0) { dfprint(qfts_discord) } else {
+  cat("All recorded QFT results appear to be correct.")
+} 
+
+```
+
+### TSPOT Results to Double-Check
+```{r tspotcheck}
+
+# Calculate tspot results using tbdiag - exclude any "Test Not Performed" TSPOTs.
+tspots <- subset(to1clean$tspot,
+                 subset = !result %in% "Test Not Performed",
+                 select = c("StudyId", "dt_placed", 
+                            "nil", "panel_a", "panel_b", "mito", "result",
+                            "nil.num", "panel_a.num", "panel_b.num", "mito.num")
+)
+               
+tspots$result_check <- with(tspots, 
+                          tspot.interp(nil = nil.num, 
+                                       panel_a = panel_a.num, 
+                                       panel_b = panel_b.num,
+                                       mito = mito.num,
+                                       verbosity = "terse")
+)
+
+
+# Identify any discordant results
+tspots_discord <- subset(tspots,
+                       subset = result != result_check,
+                       select = c("StudyId", "dt_placed", 
+                                  "nil", "panel_a", "panel_b", "mito", 
+                                  "result", "result_check")
+)
+
+
+# Pretty names
+names(tspots_discord) <- c("StudyId", "Date Placed", 
+                         "Nil", "Panel A", "Panel B", "Mitogen",
+                         "DMS Result", "Calculated Result")
+
+
+# Print
+if(nrow(tspots_discord) > 0) { dfprint(tspots_discord) } else {
+  cat("All recorded TSPOT results appear to be correct.")
+} 
+```
+
+
+
 
 ### Participants with TSTs Read Outside of the 44-76 Hour Window
 ```{r}
