@@ -89,7 +89,7 @@ load(local_facts$datapath)
 # or who didn't complete enrollment 
 
 enrolled <- with(to1clean$master,
-    StudyId[!CloseReason %in% c("Didn't complete enrollment", "Withdrew") &
+    StudyId[!CloseReason %in% c("Didn't complete enrollment", "Withdrew", "Not eligible") &
             VisitDate >= as.Date(local_facts$period_start) &
             VisitDate <= as.Date(local_facts$period_end)]
 )
