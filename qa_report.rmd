@@ -309,8 +309,8 @@ tspots <- subset(to1clean$tspot,
                
 tspots$result_check <- with(tspots, 
                           tspot.interp(nil = nil.num, 
-                                       panel_a = panel_a.num, 
-                                       panel_b = panel_b.num,
+                                       panel.a = panel_a.num, 
+                                       panel.b = panel_b.num,
                                        mito = mito.num,
                                        verbosity = "terse")
 )
