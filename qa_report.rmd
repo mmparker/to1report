@@ -67,7 +67,7 @@ options(stringsAsFactors = FALSE)
 library(knitr)     # It's a knitr document, after all...
 library(to1check)  # All TO1-related functions
 library(plyr)      # For the count() and arrange() functions
-library(xtable)    # For printing data.frames nicely
+library(mpmisc)    # For printing data.frames nicely
 library(lubridate) # For calculating number of weeks remaining
 library(tbdiag)    # For checking QFT and TSPOT results
 
@@ -98,30 +98,6 @@ enrolled <- with(to1clean$master,
 
 # Set up subsets of just the participants enrolled this period
 enrolled_master <- to1clean$master[to1clean$master$StudyId %in% enrolled, ]
-
-
-
-# Set up default print arguments for printing tables:
-# xtable() makes data.frames more suitable for display
-# format() converts all of the data.frame comments to character*;
-# print() writes the xtable object to HTML
-
-# *print() for xtable throws a tantrum over Date and POSIXct variables,
-# so they have to be converted to character before printing 
-
-dfprint <- function(df, printdigits = 2) {
-    print(
-        xtable(format(df, 
-                      na.encode = FALSE, 
-                      digits = printdigits, 
-                      nsmall = printdigits), 
-               align = c("l", "l", rep("c", ncol(df) - 1))
-        ),
-        type = "html",
-        include.rownames = FALSE,
-        NA.string = "-")
-}
-
 
 
 
@@ -186,7 +162,7 @@ weekly_enrolled <- ddply(enrolled_weeks, .var = "enroll_week", .fun = summarise,
 )
 
 cat("Enrollment Totals for Last Eight Weeks \n")
-dfprint(tail(weekly_enrolled[ , c("Week", "Number Enrolled")], 8))
+dfprintif(tail(weekly_enrolled[ , c("Week", "Number Enrolled")], 8))
 
 
 
@@ -209,9 +185,9 @@ names(fu_report) <- c("StudyID", "Enroll Date",
                       "FU Cycle", "Days Left", "Completed")
 
 
-if(nrow(fu_report) > 0) { dfprint(fu_report) } else {
-  cat("No participants require follow-up at this time.")
-} 
+dfprintif(fu_report,
+          norowmsg = "No participants require follow-up at this time.")
+
 ```
 
 
@@ -226,9 +202,9 @@ names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date",
                            "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
-if(nrow(tripnegtoclose) > 0) { dfprint(tripnegtoclose) } else {
-  cat("No open triple-negative participants at this time.")
-} 
+dfprintif(tripnegtoclose,
+          norowmsg = "No open triple-negative participants at this time.")
+
 ```
 
 
@@ -241,9 +217,9 @@ closedwrongly <- arrange(closed_check(to1clean), close_problem, VisitDate)
 # Pretty names
 names(closedwrongly) <- c("StudyId", "Visit Date", "Reason Closed", "Problem")
 
-if(nrow(closedwrongly) > 0) { dfprint(arrange(closedwrongly, `Visit Date`)) } else {
-  cat("There are no incorrectly-closed participants at this time.")
-} 
+dfprintif(arrange(closedwrongly, `Visit Date`),
+         norowmsg = "There are no incorrectly-closed participants at this time.")
+
 
 ```
 
@@ -290,9 +266,9 @@ names(qfts_discord) <- c("StudyId", "Date Placed",
 
 
 # Print
-if(nrow(qfts_discord) > 0) { dfprint(qfts_discord) } else {
-  cat("All recorded QFT results appear to be correct.")
-} 
+dfprintif(qfts_discord,
+          norowmsg = "All recorded QFT results appear to be correct.")
+
 
 ```
 
@@ -332,9 +308,9 @@ names(tspots_discord) <- c("StudyId", "Date Placed",
 
 
 # Print
-if(nrow(tspots_discord) > 0) { dfprint(tspots_discord) } else {
-  cat("All recorded TSPOT results appear to be correct.")
-} 
+dfprintif(tspots_discord,
+          norowmsg = "All recorded TSPOT results appear to be correct.")
+
 ```
 
 
@@ -353,9 +329,9 @@ names(winprob_enrolled) <- c("StudyId",
                              "Hours Between")
 
 
-if(nrow(winprob_enrolled) > 0) { dfprint(winprob_enrolled) } else {
-  cat("All TSTs read within the protocol window.")
-} 
+dfprintif(winprob_enrolled,
+          norowmsg = "All TSTs read within the protocol window.")
+
 ```
 
 
@@ -377,9 +353,9 @@ names(missingtest) <- c("StudyId", "Visit Date",
                         "TST Result", "QFT Result", "TSPOT Result")
 
 
-if(nrow(missingtest) > 0) { dfprint(missingtest) } else {
-  cat("All participants have complete test results at this time.")
-} 
+dfprintif(missingtest,
+          norowmsg = "All participants have complete test results at this time.")
+
 ```
 
 
@@ -397,9 +373,9 @@ names(ageprob_enrolled)[names(ageprob_enrolled) %in% "calc_age"] <- "Calculated 
 names(ageprob_enrolled)[names(ageprob_enrolled) %in% "age_diff"] <- "Difference"
 
 
-if(nrow(ageprob_enrolled) > 0) { dfprint(ageprob_enrolled) } else {
-  cat("\n","All pre-enrollment and calculated ages match.")
-} 
+dfprintif(ageprob_enrolled,
+          norowmsg = "\n","All pre-enrollment and calculated ages match.")
+
 ```
 
 
@@ -422,7 +398,7 @@ htwtoutliers_enrolled <- htwts$outlierdf[htwts$outlierdf$StudyId %in% enrolled, 
 # Slightly nicer names
 names(htwtoutliers_enrolled) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-dfprint(htwtoutliers_enrolled)
+dfprintif(htwtoutliers_enrolled)
 ```
 
 
@@ -435,9 +411,9 @@ htwtmissing_enrolled <- htwts$missingdf[htwts$missingdf$StudyId %in% enrolled, ]
 # Slightly nicer names
 names(htwtmissing_enrolled) <- c("StudyId", "Height (inches)", "Weight (pounds)")
 
-if(nrow(htwtmissing_enrolled) > 0) { dfprint(htwtmissing_enrolled) } else {
-  cat("All participants have height and weight recorded.")
-} 
+dfprintif(htwtmissing_enrolled,
+          norowmsg = "All participants have height and weight recorded.")
+
 ```
 
 
@@ -457,10 +433,12 @@ rare_tst_lot <- subset(to1clean$skintest,
 names(rare_tst_lot) <- c("StudyId", "Date Placed", "Placed By", "PPD Lot #")
 
 
-if(nrow(rare_tst_lot) > 0) { 
-    dfprint(arrange(rare_tst_lot, `PPD Lot #`)) } else {
-  cat("All participants TST lots have", n.rare, "or more placements recorded.")
-} 
+dfprintif(arrange(rare_tst_lot, `PPD Lot #`),
+          norowmsg = paste("All participants TST lots have", 
+                           n.rare, 
+                           "or more placements recorded.")
+)
+
 ```
 
 
