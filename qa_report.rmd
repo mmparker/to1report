@@ -374,7 +374,7 @@ names(ageprob_enrolled)[names(ageprob_enrolled) %in% "age_diff"] <- "Difference"
 
 
 dfprintif(ageprob_enrolled,
-          norowmsg = "\n","All pre-enrollment and calculated ages match.")
+          norowmsg = paste("\n","All pre-enrollment and calculated ages match."))
 
 ```
 
