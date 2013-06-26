@@ -259,6 +259,22 @@ dfprintif(tspots_discord,
 
 
 
+### Participants with Follow-ups Outside of the 45 Day Window
+```{r}
+
+oobfu <- check_fu(to1clean)
+
+# Pretty names
+names(oobfu) <- c("StudyID", "Enrollment Date", "FU Cycle", "FU Date",
+                  "Eligibility Started", "Eligibility Ended")
+
+dfprintif(arrange(oobfu, `FU Date`),
+          norowmsg = "All follow-ups were completed on eligible dates.")
+
+
+```
+
+
 
 ### Participants with TSTs Read Outside of the 44-76 Hour Window
 ```{r}
