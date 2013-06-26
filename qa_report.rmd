@@ -34,14 +34,14 @@ load(local_facts$datapath)
 # or who didn't complete enrollment 
 
 enrolled <- with(to1clean$master,
-    StudyId[!CloseReason %in% c("Didn't complete enrollment", "Withdrew", "Not eligible") &
-            VisitDate >= as.Date(local_facts$period_start) &
-            VisitDate <= as.Date(local_facts$period_end)]
+    StudyID[!CloseReason %in% c("Didn't complete enrollment", "Withdrew", "Not eligible") &
+            EnrollDate >= as.Date(local_facts$period_start) &
+            EnrollDate <= as.Date(local_facts$period_end)]
 )
 
 
 # Set up subsets of just the participants enrolled this period
-enrolled_master <- to1clean$master[to1clean$master$StudyId %in% enrolled, ]
+enrolled_master <- to1clean$master[to1clean$master$StudyID %in% enrolled, ]
 
 
 
@@ -81,7 +81,7 @@ Average Weekly Enrollment Required: `r weekly_target`
 
 ```{r,results="hide",fig.width = 12, fig.height = 6}
 # Plot enrollment progress to date
-enrolled_dates <- enrolled_master$VisitDate
+enrolled_dates <- enrolled_master$EnrollDate
 
 enroll_progress_plot(enrolled_dates,
                      target = local_facts$enroll_target,
@@ -139,10 +139,10 @@ dfprintif(fu_report,
 ### Triple-Negative Participants to Close
 ```{r to_close}
 # Identify triple neg participants to close (and sort by visit date)
-tripnegtoclose <- arrange(to_close(to1clean), VisitDate)
+tripnegtoclose <- arrange(to_close(to1clean), EnrollDate)
 
 # Pretty names
-names(tripnegtoclose) <- c("StudyId", "Status", "Visit Date", 
+names(tripnegtoclose) <- c("StudyID", "Status", "Visit Date", 
                            "TST Neg?", "QFT Neg?",
                            "TSPOT Neg?", "Triple Neg?")
 
@@ -156,10 +156,10 @@ dfprintif(tripnegtoclose,
 ### Participants Closed Incorrectly
 ```{r closed_wrongly}
 # Identify triple neg participants to close (and sort by visit date)
-closedwrongly <- arrange(closed_check(to1clean), close_problem, VisitDate)
+closedwrongly <- arrange(closed_check(to1clean), close_problem, EnrollDate)
 
 # Pretty names
-names(closedwrongly) <- c("StudyId", "Visit Date", "Reason Closed", "Problem")
+names(closedwrongly) <- c("StudyID", "Visit Date", "Reason Closed", "Problem")
 
 dfprintif(arrange(closedwrongly, `Visit Date`),
          norowmsg = "There are no incorrectly-closed participants at this time.")
@@ -179,7 +179,7 @@ dfprintif(arrange(closedwrongly, `Visit Date`),
 
 # Calculate QFT results using tbdiag
 qfts <- subset(to1clean$qft,
-               select = c("StudyId", "dt_placed", 
+               select = c("StudyID", "dt_placed", 
                           "nil", "tb", "mito", "result",
                           "nil.num", "tb.num", "mito.num",
                           "rerun_nil", "rerun_tb", "rerun_mito", "rerun_result",
@@ -197,14 +197,14 @@ qfts$result_check <- with(qfts,
 # Identify any discordant results
 qfts_discord <- subset(qfts,
                        subset = result != result_check,
-                       select = c("StudyId", "dt_placed", 
+                       select = c("StudyID", "dt_placed", 
                                   "nil", "tb", "mito", 
                                   "result", "result_check")
 )
 
 
 # Pretty names
-names(qfts_discord) <- c("StudyId", "Date Placed", 
+names(qfts_discord) <- c("StudyID", "Date Placed", 
                          "Nil", "TB Antigen", "Mitogen",
                          "DMS Result", "Calculated Result")
 
@@ -222,7 +222,7 @@ dfprintif(qfts_discord,
 # Calculate tspot results using tbdiag - exclude any "Test Not Performed" TSPOTs.
 tspots <- subset(to1clean$tspot,
                  subset = !result %in% "Test Not Performed",
-                 select = c("StudyId", "dt_placed", 
+                 select = c("StudyID", "dt_placed", 
                             "nil", "panel_a", "panel_b", "mito", "result",
                             "nil.num", "panel_a.num", "panel_b.num", "mito.num")
 )
@@ -239,14 +239,14 @@ tspots$result_check <- with(tspots,
 # Identify any discordant results
 tspots_discord <- subset(tspots,
                        subset = result != result_check,
-                       select = c("StudyId", "dt_placed", 
+                       select = c("StudyID", "dt_placed", 
                                   "nil", "panel_a", "panel_b", "mito", 
                                   "result", "result_check")
 )
 
 
 # Pretty names
-names(tspots_discord) <- c("StudyId", "Date Placed", 
+names(tspots_discord) <- c("StudyID", "Date Placed", 
                          "Nil", "Panel A", "Panel B", "Mitogen",
                          "DMS Result", "Calculated Result")
 
@@ -264,10 +264,10 @@ dfprintif(tspots_discord,
 ```{r}
 winprob <- tst_win_check(to1clean)
 
-winprob_enrolled <- winprob[winprob$StudyId %in% enrolled, ]
+winprob_enrolled <- winprob[winprob$StudyID %in% enrolled, ]
 
 # Pretty names
-names(winprob_enrolled) <- c("StudyId",
+names(winprob_enrolled) <- c("StudyID",
                              "Date/Time Placed", "Placed By",
                              "Date/Time Read", "Read By",
                              "Hours Between")
@@ -285,15 +285,15 @@ dfprintif(winprob_enrolled,
 # Identify participants with a missing test
 testres <- compile_results(to1clean)
 
-testres_enrolled <- testres[testres$StudyId %in% enrolled, ]
+testres_enrolled <- testres[testres$StudyID %in% enrolled, ]
 
-missingtest <- subset(arrange(testres_enrolled, VisitDate),
+missingtest <- subset(arrange(testres_enrolled, EnrollDate),
                       subset = (is.na(tst) | is.na(qft) | is.na(tspot)) & 
-                               StudyId %in% enrolled,
-                      select = c("StudyId", "VisitDate", "tst", "qft", "tspot"))
+                               StudyID %in% enrolled,
+                      select = c("StudyID", "EnrollDate", "tst", "qft", "tspot"))
 
 # Pretty names
-names(missingtest) <- c("StudyId", "Visit Date", 
+names(missingtest) <- c("StudyID", "Visit Date", 
                         "TST Result", "QFT Result", "TSPOT Result")
 
 
@@ -309,7 +309,7 @@ Age is calculated from participant's reported date of birth and their visit date
 ```{r}
 ageprob <- age_check(to1clean)
 
-ageprob_enrolled <- ageprob[ageprob$StudyId %in% enrolled, ]
+ageprob_enrolled <- ageprob[ageprob$StudyID %in% enrolled, ]
 
 # Pretty names
 names(ageprob_enrolled)[names(ageprob_enrolled) %in% "preenroll_age"] <- "Pre-enroll Age"
@@ -337,10 +337,10 @@ htwts$plot
 #### Participants with most-outlying heights/weights:
 ```{r}
 # Subset to this enrollment period
-htwtoutliers_enrolled <- htwts$outlierdf[htwts$outlierdf$StudyId %in% enrolled, ]
+htwtoutliers_enrolled <- htwts$outlierdf[htwts$outlierdf$StudyID %in% enrolled, ]
 
 # Slightly nicer names
-names(htwtoutliers_enrolled) <- c("StudyId", "Height (inches)", "Weight (pounds)")
+names(htwtoutliers_enrolled) <- c("StudyID", "Height (inches)", "Weight (pounds)")
 
 dfprintif(htwtoutliers_enrolled)
 ```
@@ -350,10 +350,10 @@ dfprintif(htwtoutliers_enrolled)
 #### Enrolled participants missing height and/or weight:
 ```{r}
 # Subset to this enrollment period
-htwtmissing_enrolled <- htwts$missingdf[htwts$missingdf$StudyId %in% enrolled, ]
+htwtmissing_enrolled <- htwts$missingdf[htwts$missingdf$StudyID %in% enrolled, ]
 
 # Slightly nicer names
-names(htwtmissing_enrolled) <- c("StudyId", "Height (inches)", "Weight (pounds)")
+names(htwtmissing_enrolled) <- c("StudyID", "Height (inches)", "Weight (pounds)")
 
 dfprintif(htwtmissing_enrolled,
           norowmsg = "All participants have height and weight recorded.")
@@ -371,10 +371,10 @@ n.rare <- 5
 rare_tst_lot <- subset(to1clean$skintest,
                        subset = PpdLotNumber %in% 
                                 lotfreq$PpdLotNumber[lotfreq$freq < n.rare],
-                       select = c("StudyId", "dt_placed", "TstPlacedBy", "PpdLotNumber"))
+                       select = c("StudyID", "dt_placed", "TstPlacedBy", "PpdLotNumber"))
 
 # Pretty names
-names(rare_tst_lot) <- c("StudyId", "Date Placed", "Placed By", "PPD Lot #")
+names(rare_tst_lot) <- c("StudyID", "Date Placed", "Placed By", "PPD Lot #")
 
 
 dfprintif(arrange(rare_tst_lot, `PPD Lot #`),
