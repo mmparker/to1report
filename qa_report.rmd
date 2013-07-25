@@ -406,3 +406,35 @@ dfprintif(arrange(rare_tst_lot, `PPD Lot #`),
 
 
 
+### Contacts Without Source's State Case Number or GenType
+
+```{r contacts_missing_info}
+
+
+# Identify participants who are contacts but still pending either a state case number
+# or a GenType number
+
+contacts_miss <- subset(to1clean$master,
+                        subset = StateCaseNumberIdk %in% 98 |
+                                 GenTypeIdk %in% 98,
+                        select = c("StudyID", "EnrollDate", "StateCaseNumber", "GenType")
+)
+
+
+
+
+dfprintif(arrange(contacts_miss, EnrollDate, StudyID),
+          norowmsg = "All contacts appear to have complete source case information.")
+
+
+```
+
+
+
+
+
+
+
+
+
+
