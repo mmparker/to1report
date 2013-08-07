@@ -25,6 +25,7 @@ opts_chunk$set(echo = FALSE,
 
 # Load the ggplot2 theme
 source(file.path("..", "css", "theme_tbesc.r"))
+source(file.path("..", "css", "angled_x.r"))
 
 
 # Load the local info (edit this if your results are wrong)
@@ -92,8 +93,9 @@ enrolled_dates <- enrolled_master$EnrollDate
 enroll_progress_plot(enrolled_dates,
                      target = local_facts$enroll_target,
                      enroll_start = as.Date(local_facts$period_start),
-                     enroll_end = as.Date(local_facts$period_end)
-) + theme_tbesc
+                     enroll_end = as.Date(local_facts$period_end)) + 
+    theme_tbesc +
+    angled_x
 
 ```
 
@@ -351,11 +353,7 @@ dfprintif(ageprob_enrolled,
 htwts <- htwt_check(to1clean)
 
 # Show the plot (and cancel out theme_tbesc's angled axis text)
-htwts$plot + 
-    theme_tbesc + 
-    theme(axis.text.x = element_text(angle = 0,
-                                     hjust = 0.5,
-                                     vjust = 0.5))
+htwts$plot + theme_tbesc
 ```
 
 
