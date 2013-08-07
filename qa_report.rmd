@@ -350,8 +350,12 @@ dfprintif(ageprob_enrolled,
 ```{r,fig.width=8}
 htwts <- htwt_check(to1clean)
 
-# Show the plot
-htwts$plot + theme_tbesc
+# Show the plot (and cancel out theme_tbesc's angled axis text)
+htwts$plot + 
+    theme_tbesc + 
+    theme(axis.text.x = element_text(angle = 0,
+                                     hjust = 0.5,
+                                     vjust = 0.5))
 ```
 
 
