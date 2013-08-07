@@ -23,6 +23,10 @@ opts_chunk$set(echo = FALSE,
                error = TRUE)
 
 
+# Load the ggplot2 theme
+source(file.path("..", "css", "theme_tbesc.r"))
+
+
 # Load the local info (edit this if your results are wrong)
 local_facts <- read.csv("local_facts.csv")
 
@@ -89,7 +93,7 @@ enroll_progress_plot(enrolled_dates,
                      target = local_facts$enroll_target,
                      enroll_start = as.Date(local_facts$period_start),
                      enroll_end = as.Date(local_facts$period_end)
-)
+) + theme_tbesc
 
 ```
 
@@ -347,7 +351,7 @@ dfprintif(ageprob_enrolled,
 htwts <- htwt_check(to1clean)
 
 # Show the plot
-htwts$plot
+htwts$plot + theme_tbesc
 ```
 
 
