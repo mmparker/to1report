@@ -164,7 +164,7 @@ dfprintif(tripnegtoclose,
 ### Participants Closed Incorrectly
 ```{r closed_wrongly}
 # Identify triple neg participants to close (and sort by visit date)
-closedwrongly <- arrange(closed_check(to1clean), close_problem, EnrollDate)
+closedwrongly <- arrange(closed_check(to1clean), problem, EnrollDate)
 
 # Pretty names
 names(closedwrongly) <- c("StudyID", "Visit Date", "Reason Closed", "Problem")
