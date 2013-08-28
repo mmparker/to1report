@@ -438,6 +438,9 @@ dfprintif(arrange(contacts_miss, EnrollDate, StudyID),
 
 
 
+
+### Participants with Misspelled Languages
+
 ```{r langprob}
 
 # Set up a vector of acceptable language names
