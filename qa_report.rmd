@@ -438,7 +438,42 @@ dfprintif(arrange(contacts_miss, EnrollDate, StudyID),
 
 
 
+```{r langprob}
 
+# Set up a vector of acceptable language names
+langs <- c("Arabic", "Burmese", "Vietnamese", 
+           "French", "Haitian", "Chinese",
+           "Nepali", "Somali", "Spanish", 
+           "Tagalog", "Akan", "Amharic",
+           "Portuguese", "Chin", "Chuukese",
+           "Dari", "Farsi", "Fulani", "Greek",
+           "Hindi", "Hmong", "Ilocano",
+           "Indonesian", "Jarai", "Karen",
+           "Khmer", "Kirundi", "Korean",
+           "Serbian", "Kurdish", "Lao",
+           "Malayalam", "Marshallese", 
+           "Oromo", "Oromic",
+           "Polish", "Punjabi", "Romanian",
+           "Russian", "Swahili", "Tamil",
+           "Thai", "Tigrinya", "Urdu",
+           "")
+
+# Check the enrolled names for validity
+langprob <- subset(to1clean$master,
+                   subset = !tolower(InterpreterLanguage) %in% tolower(langs),
+                   select = c("StudyID", "InterpreterLanguage")
+)
+
+
+# Pretty names
+names(langprob) <- c("Study ID", "Language")
+
+
+dfprintif(langprob,
+          norowmsg = "All languages appear to be spelled correctly.")
+
+
+```
 
 
 
