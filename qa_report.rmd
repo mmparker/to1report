@@ -402,7 +402,7 @@ names(rare_tst_lot) <- c("StudyID", "Date Placed", "Placed By", "PPD Lot #")
 
 
 dfprintif(arrange(rare_tst_lot, `PPD Lot #`),
-          norowmsg = paste("All participants TST lots have", 
+          norowmsg = paste("All participants' TST lots have", 
                            n.rare, 
                            "or more placements recorded.")
 )
@@ -410,6 +410,46 @@ dfprintif(arrange(rare_tst_lot, `PPD Lot #`),
 ```
 
 
+
+
+### QFTs with Rare Lot Numbers
+```{r}
+
+# Melt the lots into a single database
+lot.melt <- melt(to1clean$qft,
+                 id.var = "StudyID",
+                 measure.var = c("QftLotNumNil", "QftLotNumTba",
+                                 "QftLotNumMit", "QftAssayLotNum")
+)
+
+# Pretty names
+levels(lot.melt$variable) <- c("Nil", "TB", "Mitogen", "Assay")
+
+# Subset to the rare lots
+qftlotfreq <- subset(count(lot.melt, c("variable", "value")),
+                     freq < n.rare)
+
+qftlotfreq$flag <- TRUE
+
+lot.probs <- merge(x = lot.melt,
+                   y = qftlotfreq[ , c("variable", "value")],
+                   by = c("variable", "value")
+)
+
+
+
+# Pretty names
+names(lot.probs) <- c("Tube", "Lot Number", "Study ID")
+
+
+dfprintif(lot.probs[ , c("Study ID", "Tube", "Lot Number")],
+          norowmsg = paste("All participants' QFT lots have", 
+                           n.rare, 
+                           "or more uses recorded.")
+)
+
+
+```
 
 
 ### Contacts Without Source's State Case Number or GenType
