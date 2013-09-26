@@ -519,6 +519,24 @@ dfprintif(langprob,
 ```
 
 
+### Participants with Unclassified Treatment Plans (Matt will fix)
 
+```{r weird_plan}
+
+weird_plan <- subset(to1clean$ltbi, 
+                     subset = plan %in% "Unknown",
+                     select = c("StudyID", "plan",
+                                "Isoniazid", "IsoniazidFreq",
+                                "Rifampin", "RifampinFreq",
+                                "Rifapentine", "RifapentineFreq",
+                                "Other", "OtherFreq")
+)
+
+
+dfprintif(weird_plan,
+          norowmsg = "All plans are successfully classified.")
+
+
+```
 
 
