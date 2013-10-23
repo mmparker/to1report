@@ -149,10 +149,16 @@ dfprintif(fu_report,
 # Identify triple neg participants to close (and sort by visit date)
 tripnegtoclose <- arrange(to_close(to1clean), EnrollDate)
 
+# Flag contacts - they won't necessarily be closed right away, 
+# pending 8-week results
+tripnegtoclose$contact <- tripnegtoclose$StudyID %in% 
+    to1clean$preenrollment$StudyID[to1clean$preenrollment$CloseContact %in% 1]
+
 # Pretty names
 names(tripnegtoclose) <- c("StudyID", "Status", "Visit Date", 
                            "TST Neg?", "QFT Neg?",
-                           "TSPOT Neg?", "Triple Neg?")
+                           "TSPOT Neg?", "Triple Neg?",
+                           "Contact?")
 
 dfprintif(tripnegtoclose,
           norowmsg = "No open triple-negative participants at this time.")
