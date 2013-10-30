@@ -364,7 +364,7 @@ htwts$plot + theme_tbesc
 
 
 
-#### Participants with most-outlying heights/weights:
+#### Participants with most-outlying heights/weights in this enrollment period:
 ```{r}
 # Subset to this enrollment period
 htwtoutliers_enrolled <- htwts$outlierdf[htwts$outlierdf$StudyID %in% enrolled, ]
@@ -372,12 +372,13 @@ htwtoutliers_enrolled <- htwts$outlierdf[htwts$outlierdf$StudyID %in% enrolled, 
 # Slightly nicer names
 names(htwtoutliers_enrolled) <- c("StudyID", "Height (inches)", "Weight (pounds)")
 
-dfprintif(htwtoutliers_enrolled)
+dfprintif(htwtoutliers_enrolled,
+          norowmsg = "No outliers are present in this period's enrollment.")
 ```
 
 
 
-#### Enrolled participants missing height and/or weight:
+#### Participants missing height and/or weight in this enrollment period:
 ```{r}
 # Subset to this enrollment period
 htwtmissing_enrolled <- htwts$missingdf[htwts$missingdf$StudyID %in% enrolled, ]
