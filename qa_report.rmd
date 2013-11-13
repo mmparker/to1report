@@ -81,6 +81,8 @@ weeks_left <- new_interval(Sys.Date(), local_facts$period_end) /
 
 # Average weekly enrollment to make target
 weekly_target <- round(total_remain / weeks_left, 1)
+
+
 ```
 
 Total Enrolled to Date: `r total_enrolled`
@@ -123,6 +125,18 @@ weekly_enrolled <- ddply(enrolled_weeks, .var = "enroll_week", .fun = summarise,
 cat("Enrollment Totals for Last Eight Weeks \n")
 dfprintif(tail(weekly_enrolled[ , c("Week", "Number Enrolled")], 8))
 
+
+
+# Estimated end of enrollment
+# Calculate average enrollment over the last eight weeks
+ave_enroll <- mean(tail(weekly_enrolled$"Number Enrolled", 8))
+
+# Crude estimate of the end of enrollment
+estimated_end <- format(Sys.Date() + total_remain / ave_enroll *7, 
+                        format = "%B %d, %Y"
+)
+
+cat("Estimated Completion of Enrollment: ", estimated_end)
 
 
 
