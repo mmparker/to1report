@@ -29,7 +29,7 @@ source(file.path("..", "css", "angled_x.r"))
 
 
 # Load the local info (edit this if your results are wrong)
-local_facts <- read.csv("local_facts.csv")
+local_facts <- read.csv(file.path("..", "local_facts.csv"))
 
 # Load the latest cleaned data
 load(local_facts$datapath)
