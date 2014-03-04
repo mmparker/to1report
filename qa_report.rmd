@@ -42,8 +42,10 @@ enrolled <- with(to1clean$master,
     StudyID[!CloseReason %in% c("Didn't complete enrollment", 
                                 "Withdrew", 
                                 "Not eligible") &
-            EnrollDate >= as.Date(local_facts$period_start) &
-            EnrollDate <= as.Date(local_facts$period_end)]
+            EnrollDate >= as.Date(local_facts$period_start,
+                                  format = "%m/%d/%Y") &
+            EnrollDate <= as.Date(local_facts$period_end,
+                                  format = "%m/%d/%Y")]
 )
 
 # For checks that should include participants form all times
