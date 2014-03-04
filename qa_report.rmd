@@ -31,6 +31,17 @@ source(file.path("..", "css", "angled_x.r"))
 # Load the local info (edit this if your results are wrong)
 local_facts <- read.csv(file.path("..", "local_facts.csv"))
 
+
+# Conver the period start and end dates to Dates
+local_facts$period_start <- as.Date(local_facts$period_start,
+                                    format = "%m/%d/%Y")
+
+
+local_facts$period_end <- as.Date(local_facts$period_end,
+                                  format = "%m/%d/%Y")
+
+
+
 # Load the latest cleaned data
 load(local_facts$datapath)
 
@@ -42,10 +53,8 @@ enrolled <- with(to1clean$master,
     StudyID[!CloseReason %in% c("Didn't complete enrollment", 
                                 "Withdrew", 
                                 "Not eligible") &
-            EnrollDate >= as.Date(local_facts$period_start,
-                                  format = "%m/%d/%Y") &
-            EnrollDate <= as.Date(local_facts$period_end,
-                                  format = "%m/%d/%Y")]
+            EnrollDate >= local_facts$period_start &
+            EnrollDate <= local_facts$period_end]
 )
 
 # For checks that should include participants form all times
@@ -103,8 +112,8 @@ enrolled_dates <- enrolled_master$EnrollDate
 
 enroll_progress_plot(enrolled_dates,
                      target = local_facts$enroll_target,
-                     enroll_start = as.Date(local_facts$period_start),
-                     enroll_end = as.Date(local_facts$period_end)) + 
+                     enroll_start = local_facts$period_start,
+                     enroll_end = local_facts$period_end) + 
     theme_tbesc +
     angled_x
 
