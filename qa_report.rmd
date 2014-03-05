@@ -519,7 +519,9 @@ dfprintif(arrange(contacts_miss, EnrollDate, StudyID),
 
 
 
-### Participants with Misspelled Languages
+### Participants with Non-Standard Languages
+
+(if this isn't an error, ask Matt to add it to the list of accepted spellings)
 
 ```{r langprob}
 
