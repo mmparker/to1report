@@ -215,6 +215,54 @@ dfprintif(arrange(closedwrongly, `Visit Date`),
 
 
 
+### Participants Whose Last Treatment Record Was More Than 30 Days Ago
+
+```{r tx_due}
+
+
+# Summarize the treatment information in DMS
+# Merge treatments onto plans
+ltbi_tx <- merge(x = subset(to1clean$ltbi,
+                            subset = AcceptTreatment %in% TRUE &
+                                     is.na(TreatmentComplete),
+                            select = c("StudyID", "plan", "ScriptPickUpDate")),
+                 y = ddply(to1clean$ltbifollowup, 
+                           .var = "StudyID", 
+                           .fun = summarise,
+                           latest_fu = max(VisitDate)),
+                 by = "StudyID",
+                 all.x = TRUE)
+                    
+
+# Between the two sets of records, identify the latest
+ltbi_tx$latest_tx <- with(ltbi_tx, 
+                          pmax(ScriptPickUpDate, latest_fu, na.rm = TRUE))
+
+
+# Calculate days since that latest record
+ltbi_tx$days_since_record <- with(ltbi_tx, as.numeric(Sys.Date() - latest_tx))
+
+
+# Subset to those with records more than 30 days old
+tx_due <- subset(ltbi_tx, 
+                 subset = days_since_record > 30,
+                 select = c("StudyID", "plan", "latest_tx", "days_since_record")
+)
+
+
+# Nicer names
+names(tx_due) <- c("StudyID", "Tx Plan", "Last Record", "Days Since")
+
+
+dfprintif(arrange(tx_due, `Days Since`),
+          norowmsg = "All participants with open treatment status have a treatment record in the last thirty days.",
+          printdigits = 0)
+
+
+
+```
+
+
 
 ## Data Quality Checks
 ------------------------
