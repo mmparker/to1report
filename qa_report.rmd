@@ -214,6 +214,33 @@ dfprintif(arrange(closedwrongly, `Visit Date`),
 ```
 
 
+### Test-Positive Participants With No LTBI Treatment Form
+
+```{r no_ltbi}
+
+# Get the list of test-positive participants who were actually enrolled
+testpos <- subset(compile_results(to1clean), 
+                  subset = anypos %in% TRUE &
+                           StudyID %in% enrolled_ever
+)
+
+
+# Flag those with no LTBI Treatment form
+testpos$has_ltbi <- testpos$StudyID %in% to1clean$ltbi$StudyID
+
+
+missing_ltbi <- subset(testpos,
+                       subset = !has_ltbi,
+                       select = c("StudyID", "result_class", "EnrollDate")
+)
+
+dfprintif(arrange(missing_ltbi, EnrollDate),
+          norowmsg = "All test-positive participants have an LTBI Treatment form on file.")
+
+
+```
+
+
 
 ### Participants Whose Last Treatment Record Was More Than 30 Days Ago
 
